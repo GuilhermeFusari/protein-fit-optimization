@@ -3,14 +3,14 @@
 Este projeto tem como objetivo **encaixar múltiplos arquivos PDB de proteínas dentro de um envelope estrutural** utilizando o algoritmo **Iterative Closest Point (ICP)** otimizado com **Chamfer Distance**, sem depender de RMSD.
 
 ## Estrutura do Projeto
-
+```
 protein-packing/
 ├─ data/ # Arquivos PDB e envelopes (não versionados)
 ├─ src/ # Scripts Python, ex: pdb_packing.py
 ├─ results/ # Resultados gerados (opcionalmente ignorados)
 ├─ .gitignore
 └─ README.md
-
+```
 > Pastas `data/` e `results/` estão no `.gitignore` para não subir arquivos grandes.
 
 ## Funcionalidades
@@ -29,7 +29,7 @@ protein-packing/
 
 ```bash
 pip install -r requirements.txt
-
+```
 ## Uso
 
 Coloque seus arquivos PDB na pasta data/.
@@ -39,7 +39,7 @@ Ajuste parâmetros no script pdb_packing.py.
 Execute: 
 ```bash
 python scripts/pdb_packing.py
-
+```
 
 Os resultados serão salvos em results/.
 
