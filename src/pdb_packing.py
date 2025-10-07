@@ -1,102 +1,190 @@
-#!/usr/bin/env python3
-"""
-pdb_packing.py — Empacotamento otimizado baseado em Chamfer Distance
-Seleciona automaticamente os melhores PDBs que se encaixam bem no envelope.
-"""
-
-import time
+from multiprocessing import Pool, cpu_count
+import os
 import numpy as np
+from Bio.PDB import PDBParser, PDBIO
+from Bio.PDB.MMCIF2Dict import MMCIF2Dict
 from pathlib import Path
-from icp_aligner import find_best_pdb, load_pdb_as_points, save_points_as_pdb
 from scipy.spatial import cKDTree
+import time
 
-
-def chamfer_distance(A, B):
+def extract_structure_from_pdb(pdb_path):
     """
-    Calcula a Chamfer Distance entre dois conjuntos de pontos (A e B).
-    Essa métrica quantifica o quão bem os pontos de um conjunto se aproximam do outro,
-    sendo usada para avaliar o alinhamento de proteínas com o envelope.
+    Carrega um arquivo PDB usando Biopython e extrai as coordenadas atômicas.
+
+    Retorna:
+    - coords: matriz Nx3 com coordenadas de todos os átomos.
+    - structure: objeto de estrutura Biopython completo.
     """
-    tree_A = cKDTree(A)
-    tree_B = cKDTree(B)
-    dist_AB, _ = tree_A.query(B)
-    dist_BA, _ = tree_B.query(A)
-    return np.mean(dist_AB**2) + np.mean(dist_BA**2)
+    parser = PDBParser(QUIET=True)
+    structure = parser.get_structure("PROT", pdb_path)
+    coords = np.array([atom.coord for atom in structure.get_atoms()], dtype=float)
+    return coords, structure
 
-
-def run_packing_pipeline(input_path, envelope_path, output_path, args):
+def coords_from_cif_dict(cif_dict):
     """
-    Pipeline principal do modo 'packing':
-    - Carrega uma lista limitada de PDBs.
-    - Alinha cada PDB ao envelope individualmente usando ICP.
-    - Calcula a Chamfer Distance de cada alinhamento.
-    - Seleciona os melhores PDBs com base em um threshold automático.
-    - Combina os pontos dos PDBs selecionados e salva em um único arquivo PDB final.
+    Converte os dados de um dicionário MMCIF em um array Nx3 de coordenadas atômicas.
+
+    Retorna:
+    - coords: matriz Nx3 com coordenadas do envelope.
     """
-    start = time.time()
-    input_path = Path(input_path)
-    output_path = Path(output_path)
-    output_path.mkdir(parents=True, exist_ok=True)
+    xs = np.array([float(x) for x in cif_dict['_atom_site.Cartn_x']], dtype=float)
+    ys = np.array([float(y) for y in cif_dict['_atom_site.Cartn_y']], dtype=float)
+    zs = np.array([float(z) for z in cif_dict['_atom_site.Cartn_z']], dtype=float)
+    return np.stack([xs, ys, zs], axis=1)
 
-    print("\n🚀 Iniciando modo PACKING (seleção via Chamfer Distance)...")
+def rotation_matrix(axis, theta):
+    """
+    Gera uma matriz de rotação 3x3 para um eixo e ângulo fornecidos.
 
-    pdb_files = list(input_path.glob("*.pdb"))
-    if not pdb_files:
-        print("❌ Nenhum PDB encontrado.")
-        return
+    Args:
+    - axis: vetor de 3 dimensões representando o eixo de rotação.
+    - theta: ângulo de rotação em radianos.
 
-    # Limita ao número máximo de estruturas definido pelo usuário
-    pdb_files = pdb_files[:args.max_structures]
-    print(f"📦 Total de {len(pdb_files)} candidatos")
-    envelope_points = load_pdb_as_points(str(envelope_path))
+    Retorna:
+    - Matriz 3x3 de rotação.
+    """
+    axis = axis/np.linalg.norm(axis)
+    a = np.cos(theta/2)
+    b,c,d = -axis*np.sin(theta/2)
+    return np.array([[a*a+b*b-c*c-d*d, 2*(b*c-a*d), 2*(b*d+a*c)],
+                     [2*(b*c+a*d), a*a+c*c-b*b-d*d, 2*(c*d-a*b)],
+                     [2*(b*d-a*c), 2*(c*d+a*b), a*a+d*d-b*b-c*c]])
 
-    resultados = []  # Lista de tuplas: (pdb_name, aligned_points, chamfer_value)
+def apply_transform(structure, T):
+    """
+    Aplica uma transformação 4x4 (R+t) diretamente nos átomos de uma estrutura Biopython.
 
-    # Itera sobre cada PDB, alinhando e avaliando sua qualidade
-    for i, pdb_file in enumerate(pdb_files, 1):
-        print(f"\n📄 [{i}/{len(pdb_files)}] Testando {pdb_file.name}")
+    Args:
+    - structure: objeto Biopython da proteína.
+    - T: matriz 4x4 contendo rotação (3x3) e translação (3x1).
+    """
+    R = T[:3,:3]; t = T[:3,3]
+    for atom in structure.get_atoms():
+        atom.set_coord(R @ atom.coord + t)
 
-        try:
-            class Args:
-                input = str(pdb_file)
-                envelope = str(envelope_path)
-                output = str(output_path)
-                align_what = 'protein'
-                max_iter = args.max_iter
-                sample_env = 5000
-                workers = 1
+def chamfer_distance(setA, setB):
+    """
+    Calcula a Chamfer Distance entre dois conjuntos de pontos.
 
-            aligned_points, transform = find_best_pdb(Args, return_transform=True)
-            cd = chamfer_distance(aligned_points, envelope_points)
-            print(f"🔹 Chamfer Distance = {cd:.6f}")
-            resultados.append((pdb_file.name, aligned_points, cd))
+    Retorna:
+    - score médio da Chamfer Distance, indicando a similaridade entre formas.
+    """
+    treeA = cKDTree(setA)
+    treeB = cKDTree(setB)
+    dists_A_to_B, _ = treeB.query(setA, k=1)
+    dists_B_to_A, _ = treeA.query(setB, k=1)
+    return (np.mean(dists_A_to_B) + np.mean(dists_B_to_A)) / 2.0
 
-        except Exception as e:
-            print(f"⚠️ Erro ao processar {pdb_file.name}: {e}")
+def check_overlap(new_coords, existing_coords, min_dist=1.5):
+    """
+    Verifica se as coordenadas de um novo PDB sobrepõem-se a PDBs já posicionados.
 
-    if not resultados:
-        print("\n❌ Nenhum resultado obtido.")
-        return
+    Retorna:
+    - True se houver sobreposição (distância mínima menor que min_dist).
+    - False caso contrário.
+    """
+    if existing_coords.shape[0] == 0:
+        return False
+    tree = cKDTree(existing_coords)
+    dists, _ = tree.query(new_coords, k=1)
+    return np.any(dists < min_dist)
 
-    # Ordena os resultados pelo menor Chamfer Distance
-    resultados.sort(key=lambda x: x[2])
+def place_pdb(args_tuple):
+    """
+    Tenta posicionar um PDB dentro do envelope sem sobreposição.
 
-    # Define threshold automático para selecionar os melhores PDBs (top 30%)
-    valores_cd = [r[2] for r in resultados]
-    threshold = np.percentile(valores_cd, 30)
-    print(f"\n📊 Threshold automático definido em {threshold:.6f}")
+    Estratégia:
+    - Aplica rotações aleatórias.
+    - Centraliza o PDB no envelope.
+    - Verifica sobreposição com PDBs já posicionados.
+    - Calcula score de preenchimento baseado na Chamfer Distance.
 
-    selecionados = [r for r in resultados if r[2] <= threshold]
+    Retorna:
+    - pdb_path: caminho do PDB processado.
+    - best_transform: melhor transformação 4x4 encontrada.
+    - pdb_struct: objeto Biopython da estrutura transformada.
+    - best_score: score associado à melhor posição.
+    """
+    pdb_path, envelope_coords, existing_coords, n_rotations = args_tuple
+    pdb_coords, pdb_struct = extract_structure_from_pdb(pdb_path)
+    best_score = -1
+    best_transform = None
+    for _ in range(n_rotations):
+        angle = np.random.rand() * 2*np.pi
+        axis = np.random.rand(3) - 0.5
+        axis /= np.linalg.norm(axis)
+        R = rotation_matrix(axis, angle)
+        transformed = (R @ pdb_coords.T).T
+        centroid = transformed.mean(axis=0)
+        env_centroid = envelope_coords.mean(axis=0)
+        transformed += (env_centroid - centroid)
+        if check_overlap(transformed, existing_coords):
+            continue
+        score = -chamfer_distance(transformed, envelope_coords)
+        if score > best_score:
+            best_score = score
+            T = np.eye(4)
+            T[:3,:3] = R
+            T[:3,3] = env_centroid - centroid
+            best_transform = T
+    return pdb_path, best_transform, pdb_struct, best_score
 
-    if not selecionados:
-        print("\n❌ Nenhum PDB dentro do limite.")
-        return
+def run_packing_pipeline(input_folder, envelope_path, output_folder, args):
+    """
+    Função principal que executa o packing de múltiplos PDBs:
 
-    print(f"\n🏁 {len(selecionados)} PDBs selecionados para empacotamento final")
+    Fluxo:
+    1. Carrega envelope CIF e lista de arquivos PDB.
+    2. Processa todos os PDBs em paralelo, aplicando rotações e posicionando dentro do envelope.
+    3. Evita sobreposição usando Chamfer Distance.
+    4. Mostra progresso resumido e estimativa de tempo restante.
+    5. Salva todas as estruturas posicionadas em um único arquivo de saída.
 
-    # Combina todos os PDBs selecionados em uma única nuvem de pontos
-    combined_points = np.vstack([p[1] for p in selecionados])
-    save_points_as_pdb(combined_points, str(output_path / "packing_result.pdb"))
+    Args:
+    - input_folder: pasta com arquivos PDB.
+    - envelope_path: arquivo CIF do envelope.
+    - output_folder: pasta onde salvar o resultado final.
+    - args: argumentos adicionais, como número de rotações.
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    cif_dict = MMCIF2Dict(open(envelope_path,'r',encoding='utf-8',errors='ignore'))
+    envelope_coords = coords_from_cif_dict(cif_dict)
+    pdb_files = list(Path(input_folder).glob("*.pdb"))
 
-    print(f"\n✅ Resultado final salvo em: {output_path / 'packing_result.pdb'}")
-    print(f"⏱️ Tempo total: {(time.time() - start):.1f}s")
+    total_pdbs = len(pdb_files)
+    workers = cpu_count()  # utiliza todos os núcleos disponíveis
+    print(f"📦 Total de PDBs: {total_pdbs}")
+    print(f"⚡ Usando {workers} cores para o packing\n")
+
+    all_coords = np.zeros((0,3))
+    final_structures = []
+    start_time = time.time()
+
+    # Prepara argumentos para multiprocessing
+    work_args = [(p, envelope_coords, all_coords, args.n_rotations) for p in pdb_files]
+
+    # Processamento paralelo com estimativa de progresso
+    with Pool(processes=workers) as pool:
+        for i, (pdb_path, T, pdb_struct, score) in enumerate(pool.imap_unordered(place_pdb, work_args, chunksize=10), 1):
+            if T is not None:
+                apply_transform(pdb_struct, T)
+                final_structures.append(pdb_struct)
+                all_coords = np.vstack([all_coords, np.array([atom.coord for atom in pdb_struct.get_atoms()])])
+            # Mostra progresso resumido a cada 1% completado
+            if i % max(1, total_pdbs//100) == 0 or i == total_pdbs:
+                elapsed = time.time() - start_time
+                est_total = elapsed / i * total_pdbs
+                print(f"⏱️  Processados: {i}/{total_pdbs} | Tempo estimado restante: {est_total - elapsed:.1f}s", end='\r')
+
+    # Salva resultado final
+    output_path = os.path.join(output_folder, "PACKED_ENVELOPE.pdb")
+    io = PDBIO()
+    class MultiStructure:
+        def get_atoms(self):
+            for struct in final_structures:
+                yield from struct.get_atoms()
+    io.set_structure(MultiStructure())
+    io.save(output_path)
+    total_time = time.time() - start_time
+    print(f"\n💾 Resultado final salvo em: {output_path}")
+    print(f"⏱️  Tempo total: {total_time:.1f}s")
