@@ -15,19 +15,6 @@ from scipy.spatial import cKDTree
 from multiprocessing import Pool, cpu_count
 
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description='Alinhamento de proteínas PDB com envelope usando ICP')
-    parser.add_argument('-i', '--input', required=True, help='Pasta contendo os arquivos PDB')
-    parser.add_argument('-e', '--envelope', required=True, help='Arquivo CIF do envelope')
-    parser.add_argument('-o', '--output', required=True, help='Pasta de saída para resultados')
-    parser.add_argument('--align-what', choices=['protein', 'envelope'], default='protein',
-                       help='O que alinhar: proteína no envelope ou envelope na proteína')
-    parser.add_argument('--max-iter', type=int, default=60, help='Número máximo de iterações do ICP')
-    parser.add_argument('--sample-env', type=int, default=5000, help='Amostrar pontos do envelope')
-    parser.add_argument('--workers', type=int, default=cpu_count(), help='Número de processos paralelos')
-    return parser.parse_args()
-
-
 def extract_structure_from_pdb(pdb_path):
     """
     Carrega um arquivo PDB usando Biopython e extrai as coordenadas de todos os átomos.
@@ -241,8 +228,3 @@ def find_best_pdb(args):
     print(f"❌ Erros: {error_count}")
     print(f"⏰ Tempo total: {total_time/60:.2f} minutos")
     print(f"⏱️  Tempo médio por PDB: {total_time/processed_count:.4f} segundos")
-
-
-if __name__ == "__main__":
-    args = parse_arguments()
-    find_best_pdb(args)
