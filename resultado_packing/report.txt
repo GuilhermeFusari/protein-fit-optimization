@@ -1,0 +1,14 @@
+ALIGNMENT REPORT
+================
+
+Top 1 Error (Individual): 2.591151 A
+Global Error (Combined):  2.160621 A
+Improvement: YES
+
+--------------------------------------------------
+RANK  | SCORE
+#1    | 2.5912
+#2    | 2.6294
+#3    | 2.6400
+#4    | 2.6589
+#5    | 2.6769

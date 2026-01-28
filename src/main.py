@@ -28,8 +28,19 @@ import subprocess
 import sys
 import traceback
 from pathlib import Path
+from multiprocessing import cpu_count
 
 from pdb_packing import run_packing_pipeline
+
+
+try:
+    from icp_aligner import find_best_pdb
+    from pdb_packing import run_packing_pipeline
+except ImportError as e:
+    # Caso execute fora da pasta, ajuda a debugar
+    print(f"❌ Erro de importação: {e}")
+    print("Certifique-se de estar rodando a partir da raiz do projeto, ex: python3 src/main.py ...")
+    sys.exit(1)
 
 
 def parse_arguments():
@@ -42,23 +53,29 @@ def parse_arguments():
     parser.add_argument('--max-iter', type=int, default=50, help='Número máximo de iterações ICP.')
     parser.add_argument('--max-structures', type=int, default=20, help='Número máximo de estruturas (packing).')
     parser.add_argument('--n-rotations', type=int, default=12, help='Número de rotações iniciais (packing).')
+    
+    # Adicionamos argumentos que o icp_aligner espera, mas com valores padrão aqui
+    parser.add_argument('--workers', type=int, default=cpu_count(), help='Número de threads (padrão: todos os CPUs).')
+    parser.add_argument('--sample-env', type=int, default=5000, help='Amostragem de pontos do envelope.')
+    parser.add_argument('--align-what', default='protein', choices=['protein', 'envelope'], help='O que alinhar.')
+
     return parser.parse_args()
 
 
 def main():
     args = parse_arguments()
 
+    print(f"🚀 Iniciando modo: {args.mode.upper()}")
+
     if args.mode == 'single':
         try:
-            subprocess.run(
-                ['python3', 'icp_aligner.py',
-                 '-i', args.input,
-                 '-e', args.envelope,
-                 '-o', args.output],
-                check=True
-            )
-        except subprocess.CalledProcessError as e:
+            # AGORA SIM: O main chama a função diretamente!
+            # Não usamos mais subprocess.run
+            find_best_pdb(args)
+            
+        except Exception as e:
             print(f"\n💥 Erro ao executar modo single: {e}")
+            traceback.print_exc()
             sys.exit(1)
 
     elif args.mode == 'packing':

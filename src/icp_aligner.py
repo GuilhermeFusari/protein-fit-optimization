@@ -151,11 +151,22 @@ def find_best_pdb(args):
     env_coords = coords_from_cif_dict(cif_dict)
     print(f"📊 Envelope com {env_coords.shape[0]} pontos")
 
-    pdb_files = list(Path(args.input).glob("*.pdb"))
+    input_path = Path(args.input)
+        
+    if input_path.is_file():
+        # Se o usuário passou um arquivo específico, usamos apenas ele
+        pdb_files = [input_path]
+    elif input_path.is_dir():
+        # Se passou uma pasta, procuramos todos os .pdb lá dentro
+        pdb_files = list(input_path.glob("*.pdb"))
+    else:
+        print(f"❌ Erro: O caminho '{args.input}' não existe ou não é válido.")
+        return
+
     print(f"📊 Encontrados {len(pdb_files)} arquivos PDB")
 
     if not pdb_files:
-        print("❌ Nenhum PDB encontrado!")
+        print("❌ Nenhum PDB encontrado! Verifique o caminho ou a extensão dos arquivos.")
         return
 
     # --- estimativa de tempo com 1 PDB ---
