@@ -1,0 +1,7 @@
+config,chamfer,frac_fora,cobertura,sep
+"ICP puro (uni, lam=50, 300pts)",6.698,0.18,0.372,8.182
+"bidirecional lam=2, 300pts",6.114,0.138,0.385,4.597
++ sem downsampling,5.508,0.145,0.502,4.887
++ enantiomorfos (final),5.258,0.133,0.52,4.97
+cifsup NSD (ATSAS),5.85,0.151,0.485,4.911
+cifsup ICP (ATSAS),6.125,0.161,0.466,5.519

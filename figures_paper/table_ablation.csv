@@ -1,0 +1,5 @@
+Configuration,Chamfer distance (Å),Fraction outside envelope,Envelope coverage,Centroid separation (Å),p vs baseline
+Unconstrained ICP (baseline),5.912,0.169,0.493,7.853,-
++ bidirectional penalty (lambda = 2),6.114,0.138,0.385,4.597,9.5e-02
++ full Ca representation,5.508,0.145,0.502,4.887,8.4e-08
++ enantiomorph search (final),5.258,0.133,0.520,4.970,1.2e-11

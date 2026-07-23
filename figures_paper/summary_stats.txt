@@ -1,0 +1,18 @@
+NUMBERS FOR THE MANUSCRIPT TEXT
+====================================================
+
+Benchmark size: 50 SASBDB entries
+
+Chamfer distance (Å)
+   baseline 5.912 -> final 5.258 (-11.1%), p = 1.17e-11
+Fraction outside envelope
+   baseline 0.169 -> final 0.133 (-21.1%), p = 1.21e-07
+Envelope coverage
+   baseline 0.493 -> final 0.520 (+5.6%), p = 9.80e-06
+Centroid separation (Å)
+   baseline 7.853 -> final 4.970 (-36.7%), p = 6.21e-05
+
+Mirrored hand selected in 26/50 entries (52%)
+
+Comparison against ATSAS cifsup: no statistically
+significant difference in any metric (paired Wilcoxon).
