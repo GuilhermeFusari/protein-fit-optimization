@@ -1,186 +1,117 @@
 #!/usr/bin/env python3
 """
-icp_lib.py
-Lógica de alinhamento ICP com penalidade assimétrica para packing.
+Modified ICP core library.
+Implements asymmetric penalization for volumetric boundaries,
+with Random Initial Rotation for robust statistical sampling.
 """
-
+import os
 import numpy as np
+from scipy.spatial import cKDTree
+from scipy.spatial.transform import Rotation as R_scipy
+from multiprocessing import Pool, cpu_count
 from Bio.PDB import PDBParser
 from Bio.PDB.MMCIF2Dict import MMCIF2Dict
-from pathlib import Path
-from scipy.spatial import cKDTree
-from multiprocessing import Pool, cpu_count
 
-# --- NOVA FUNÇÃO DE SCORE (A Mágica acontece aqui) ---
-
-def weighted_asymmetric_score(prot_pts, env_pts, penalty_weight=50.0):
-    """
-    Calcula um score onde 'vazar' para fora do envelope é muito mais caro
-    do que deixar espaços vazios dentro.
-    
-    prot_pts: Pontos da proteína (candidato)
-    env_pts:  Pontos do envelope (alvo)
-    penalty_weight: Quanto custa vazar? (50x mais caro que deixar vazio)
-    """
-    tree_env = cKDTree(env_pts)
-    tree_prot = cKDTree(prot_pts)
-    
-    # 1. Quão bem preenchido está o envelope? (Filling Score)
-    # Distância do Envelope -> Proteína mais próxima
-    # Se alto: Significa que tem muito espaço vazio no envelope.
-    dists_env_to_prot, _ = tree_prot.query(env_pts, k=1)
-    score_filling = np.mean(dists_env_to_prot)
-    
-    # 2. O quanto a proteína vazou? (Penalty Score)
-    # Distância da Proteína -> Envelope mais próximo
-    # Se alto: Significa que a proteína está longe do envelope (fora).
-    dists_prot_to_env, _ = tree_env.query(prot_pts, k=1)
-    score_leaking = np.mean(dists_prot_to_env)
-    
-    # O Score final soma os dois, mas multiplica o erro de vazamento
-    final_score = score_filling + (penalty_weight * score_leaking)
-    
-    return final_score
-
-# --- FUNÇÕES AUXILIARES ---
-
-def extract_structure_from_pdb(pdb_path):
-    # (Mantido igual ao seu original)
+def extract_coords(pdb_path):
     parser = PDBParser(QUIET=True)
-    try:
-        structure = parser.get_structure("PROT", pdb_path)
-    except:
-        from Bio.PDB.MMCIFParser import MMCIFParser
-        parser = MMCIFParser(QUIET=True)
-        structure = parser.get_structure("PROT", pdb_path)
-    coords = np.array([atom.coord for atom in structure.get_atoms()], dtype=float)
-    return coords, structure
+    struct = parser.get_structure("X", pdb_path)
+    return np.array([atom.coord for atom in struct.get_atoms()], dtype=float)
 
-def coords_from_cif_dict(cif_dict):
-    # (Mantido igual ao seu original)
-    xs = np.array([float(x) for x in cif_dict['_atom_site.Cartn_x']], dtype=float)
-    ys = np.array([float(y) for y in cif_dict['_atom_site.Cartn_y']], dtype=float)
-    zs = np.array([float(z) for z in cif_dict['_atom_site.Cartn_z']], dtype=float)
+def get_env_coords(cif_path):
+    d = MMCIF2Dict(open(cif_path, 'r', encoding='utf-8', errors='ignore'))
+    xs = np.array(d['_atom_site.Cartn_x'], dtype=float)
+    ys = np.array(d['_atom_site.Cartn_y'], dtype=float)
+    zs = np.array(d['_atom_site.Cartn_z'], dtype=float)
     return np.stack([xs, ys, zs], axis=1)
 
-def icp_align_with_penalty(src_pts, tgt_pts, max_iter=50, tol=1e-6, penalty=50.0):
-    """
-    ICP modificado para usar o score ponderado.
-    """
+def weighted_asymmetric_score(src, env_tree, penalty):
+    dists, _ = env_tree.query(src, k=1)
+    base_dist = np.mean(dists)
+    
+    threshold = 3.0
+    outliers = dists[dists > threshold]
+    
+    if len(outliers) > 0:
+        penalty_term = penalty * np.sum(outliers - threshold) / len(src)
+        return base_dist + penalty_term
+    return base_dist
+
+def icp_align_with_penalty(src_pts, env_pts, max_iter=30, penalty=50.0):
     src = src_pts.copy()
-    tgt = tgt_pts.copy()
+    env_tree = cKDTree(env_pts)
     final_T = np.eye(4)
     best_score = float('inf')
 
-    # KDTree do alvo (envelope) para buscar vizinhos
-    tree_tgt = cKDTree(tgt)
+    for _ in range(max_iter):
+        _, indices = env_tree.query(src, k=1)
+        closest = env_pts[indices]
+        
+        score = weighted_asymmetric_score(src, env_tree, penalty=penalty)
+        best_score = min(best_score, score)
 
-    for i in range(max_iter):
-        # 1. Encontra correspondências (Nearest Neighbors)
-        _, indices = tree_tgt.query(src, k=1)
-        closest = tgt[indices]
-
-        # 2. Calcula transform (SVD) para minimizar distância Euclidiana pura
-        # (A matemática do SVD não muda, ela sempre tenta aproximar os pontos)
-        src_mean = src.mean(axis=0)
-        tgt_mean = closest.mean(axis=0)
-        src_c = src - src_mean
-        tgt_c = closest - tgt_mean
-        H = src_c.T @ tgt_c
+        src_mean, tgt_mean = src.mean(axis=0), closest.mean(axis=0)
+        H = (src - src_mean).T @ (closest - tgt_mean)
         U, _, Vt = np.linalg.svd(H)
         R = Vt.T @ U.T
+        
         if np.linalg.det(R) < 0:
             Vt[-1, :] *= -1
             R = Vt.T @ U.T
+            
         t = tgt_mean - R @ src_mean
-        
-        # 3. Aplica transformação
-        new_src = (R @ src.T).T + t
+        src = (R @ src.T).T + t
 
-        # 4. AVALIAÇÃO COM PENALIDADE (AQUI ESTÁ A MUDANÇA)
-        # Verificamos se essa nova posição é boa usando a métrica injusta
-        current_score = weighted_asymmetric_score(new_src, tgt, penalty_weight=penalty)
-        
-        # Se melhorou o score ponderado, salvamos
-        if current_score < best_score:
-            best_score = current_score
-            # Atualiza src oficial
-            src = new_src
-            # Acumula na matriz T final
-            T_step = np.eye(4)
-            T_step[:3, :3] = R
-            T_step[:3, 3] = t
-            final_T = T_step @ final_T
-        else:
-            # Se o score piorou (provavelmente porque vazou muito), 
-            # podemos interromper ou tentar diminuir o passo (aqui simplificado para break)
-            # Mas no ICP clássico, geralmente deixamos fluir um pouco. 
-            # Para garantir convergência, aceitamos a atualização geométrica,
-            # mas o score de 'parada' é o ponderado.
-            src = new_src 
-            # (Nota: Em implementações rígidas, rejeitaríamos o passo, 
-            # mas no ICP simples, apenas atualizamos e verificamos a convergência)
-            T_step = np.eye(4)
-            T_step[:3, :3] = R
-            T_step[:3, 3] = t
-            final_T = T_step @ final_T
-
-        if current_score < tol:
-            break
+        T = np.eye(4)
+        T[:3, :3], T[:3, 3] = R, t
+        final_T = T @ final_T
 
     return final_T, best_score
 
-# --- WORKER ---
-
-def evaluate_pdb_alignment(args_tuple):
-    pdb_path, env_coords, max_iter, sample_env = args_tuple
+def evaluate_pdb_packing(args):
+    pdb_path, env_coords, max_iter, sample_size, penalty = args
     try:
-        prot_coords, _ = extract_structure_from_pdb(pdb_path)
-
-        # Amostragem do envelope (para performance)
-        if (sample_env is not None) and (sample_env > 0) and (env_coords.shape[0] > sample_env):
-            idx = np.random.choice(env_coords.shape[0], size=sample_env, replace=False)
-            env_for_icp = env_coords[idx]
+        pts = extract_coords(pdb_path)
+        
+        if sample_size and len(env_coords) > sample_size:
+            idx = np.random.choice(len(env_coords), sample_size, replace=False)
+            env_sampled = env_coords[idx]
         else:
-            env_for_icp = env_coords
+            env_sampled = env_coords
 
-        # Roda o ICP com Penalidade
-        # penalty=50.0 força a proteína a ficar dentro.
-        # Se continuar vazando, aumente para 100.0 ou 200.0
-        T_matrix, score = icp_align_with_penalty(prot_coords, env_for_icp, max_iter=max_iter, penalty=50.0)
+        # ========================================================
+        # ALEATORIEDADE: Gira a proteína em um ângulo X, Y, Z aleatório
+        # ========================================================
+        center = pts.mean(axis=0)
+        rot_matrix = R_scipy.random().as_matrix()
+        pts_rotated = (rot_matrix @ (pts - center).T).T + center
+        
+        init_T = np.eye(4)
+        init_T[:3, :3] = rot_matrix
+        init_T[:3, 3] = center - rot_matrix @ center
+        
+        # Roda o ICP a partir desse ângulo novo
+        T_iter, score = icp_align_with_penalty(pts_rotated, env_sampled, max_iter, penalty)
+        
+        # Junta o giro inicial com a rota do ICP
+        final_T = T_iter @ init_T
 
-        return True, score, pdb_path, T_matrix
+        return True, score, pdb_path, final_T
     except Exception as e:
-        return False, float('inf'), pdb_path, None
+        return False, float('inf'), pdb_path, np.eye(4)
 
-# --- ORQUESTRADOR ---
-
-def get_best_candidates(input_folder, envelope_path, top_n=50, limit=None):
-    # Carrega envelope
-    cif = MMCIF2Dict(open(envelope_path, 'r', encoding='utf-8', errors='ignore'))
-    env_coords = coords_from_cif_dict(cif)
-    
-    files = sorted(list(Path(input_folder).glob("*.pdb")))
+def get_best_candidates(input_folder, envelope_path, top_n=5, limit=None, penalty=50.0):
+    files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.pdb')]
     if limit: files = files[:limit]
     
-    print(f"⚡ [ICP Penalizado] Screening {len(files)} arquivos...")
+    env_coords = get_env_coords(envelope_path)
     
-    work_args = [(str(p), env_coords, 30, 2000) for p in files]
-    
+    work_args = [(p, env_coords, 30, 2000, penalty) for p in files]
     results = []
-    processed = 0
-    
+
     with Pool(processes=cpu_count()) as pool:
-        for res in pool.imap_unordered(evaluate_pdb_alignment, work_args, chunksize=10):
-            success, score, path, T = res
-            # Filtro de corte um pouco mais alto pois o score agora é ponderado
-            if success and score < 5000: 
-                results.append((score, path, T))
-            
-            processed += 1
-            if processed % 10 == 0:
-                print(f"   Analisado: {processed}/{len(files)}", end='\r')
-                
-    # Ordena pelo MENOR score (agora score baixo significa "dentro E preenchendo")
+        for success, score, p_path, T in pool.imap_unordered(evaluate_pdb_packing, work_args):
+            if success:
+                results.append((score, p_path, T))
+
     results.sort(key=lambda x: x[0])
     return results[:top_n], env_coords

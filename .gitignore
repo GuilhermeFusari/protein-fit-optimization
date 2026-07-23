@@ -3,3 +3,6 @@ venv/
 results_final/
 src_cnn/
 results/
+__pycache__/
+*.pyc
+resultado_*/
