@@ -1,0 +1,4 @@
+case,n_copies,n_env,single_best,combined,control_mean,control_std,ratio,report_value
+GRB2 (30 copies),30,534,2.629,1.965,5.69,0.185,2.9,1.965
+GRB2 (5 copies),5,534,2.591,2.161,7.034,0.884,3.26,2.161
+RNA SASDFQ9 (20 models),20,172,4.694,3.061,6.358,0.276,2.08,3.061
