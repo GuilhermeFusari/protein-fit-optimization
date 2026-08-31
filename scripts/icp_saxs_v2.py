@@ -1,30 +1,21 @@
 #!/usr/bin/env python3
 """
-rerun_single.py
+icp_saxs_v2.py
 
-Re-executa o alinhamento das entradas do benchmark implementando a
-metodologia DESCRITA NO ARTIGO, que o modo single do codigo antigo nao
-implementava:
+Alinhamento de estruturas atomicas em envelopes SAXS por ICP com custo
+bidirecional, representacao Ca e busca de enantiomeros.
 
-  - representacao por atomos CA com downsampling para no maximo 300 pontos
-  - penalidade volumetrica assimetrica (lambda configuravel)
-  - N reinicializacoes aleatorias, ficando com a de menor custo
-  - envelope amostrado para 5000 pontos
-
-Roda em dois bracos para permitir o ablation:
-    --penalty 0    -> ICP puro (reproduz o comportamento antigo)
-    --penalty 50   -> ICP com restricao volumetrica
-
-Metricas reportadas por entrada (todas recalculadas com o mesmo codigo,
-independentemente do custo usado na otimizacao):
-    chamfer, hausdorff, dice, frac_fora, sep_centroide, d_med
+Modos (--mode):
+    uni     penalidade so de vazamento (versao original)
+    bidir   penalidade bidirecional com limiar
+    author  formulacao original do autor (medias simples) -- recomendado
 
 Uso:
-    python3 rerun_single.py --base ICP_SAXS_Final_50/ICP_SAXS_Final_50 \\
-        --penalty 50 --out resultados_lambda50.csv
+    python3 icp_saxs_v2.py --base ICP_SAXS_Final_50/ICP_SAXS_Final_50 \\
+        --mode author --penalty 2 --max-points 3000 --out resultados.csv
 
-Reaproveita a logica de icp_lib.py (penalidade assimetrica + rotacao
-aleatoria inicial); nao depende do SAXS_Protein_Aligner instalado.
+    # salvando as poses finais (Ca) para calculo posterior de NSD etc.:
+    python3 icp_saxs_v2.py ... --save-aligned poses_finais
 """
 
 import argparse
@@ -169,9 +160,7 @@ def author_cost(src, env_pts, env_tree):
               + penalty * media(dist proteina->envelope) # vazamento
 
     Medias simples, sem limiar: todo atomo contribui, e o vazamento
-    custa `penalty` vezes mais que deixar espaco vazio. Mais simples que
-    a versao por excesso-acima-do-limiar e sem parametro de limiar para
-    calibrar.
+    custa `penalty` vezes mais que deixar espaco vazio.
     """
     d_fill, _ = cKDTree(src).query(env_pts, k=1)
     d_leak, _ = env_tree.query(src, k=1)
@@ -199,10 +188,6 @@ def icp(src_pts, env_pts, env_tree, max_iter, penalty, threshold,
     melhor iteracao: um Procrustes nao ponderado produz exatamente o
     mesmo movimento com ou sem penalidade, que e por que a versao
     original nao alterava o alinhamento.
-
-    - atomos que vazam recebem peso maior -> puxados para dentro
-    - regioes vazias do envelope entram como alvos extras -> a estrutura
-      e atraida para preencher o volume
     """
     src = src_pts.copy()
     T_total = np.eye(4)
@@ -290,6 +275,15 @@ def apply_T(pts, T):
     return (T[:3, :3] @ pts.T).T + T[:3, 3]
 
 
+def write_ca_pdb(pts, path):
+    """Grava um conjunto de pontos como PDB de carbonos alfa."""
+    with open(path, "w") as fh:
+        for i, (x, y, z) in enumerate(pts, 1):
+            fh.write(f"ATOM  {i:5d}  CA  ALA A{i:4d}    "
+                     f"{x:8.3f}{y:8.3f}{z:8.3f}  1.00  0.00           C\n")
+        fh.write("END\n")
+
+
 # --------------------------------------------------------------------------
 # metricas de avaliacao
 # --------------------------------------------------------------------------
@@ -328,7 +322,7 @@ def frac_outside(pts, env):
 
 def process(job):
     (acc, env_path, mod_path, penalty, restarts, max_iter,
-     max_pts, sample_env, seed, mode, w_leak, w_cover, enantiomorphs) = job
+     max_pts, sample_env, seed, mode, w_leak, w_cover, enantiomorphs, save_dir) = job
     t0 = time.time()
     try:
         env_full = read_pdb(env_path)
@@ -341,7 +335,7 @@ def process(job):
         rng = np.random.default_rng(seed)
         best_mirror = False
 
-        # downsampling do modelo para 300 pontos, como descrito no artigo
+        # downsampling do modelo (max_pts; use >= n para desativar)
         n_model_full = len(mod)
         if len(mod) > max_pts:
             mod = mod[np.sort(rng.choice(len(mod), max_pts, replace=False))]
@@ -357,8 +351,7 @@ def process(job):
 
         # Envelopes SAXS nao definem quiralidade: a reconstrucao ab initio
         # produz uma forma e sua imagem especular com igual probabilidade.
-        # Testamos as duas e ficamos com a de menor custo, como o cifsup
-        # faz por padrao (--enantiomorphs=YES).
+        # Testamos as duas e ficamos com a de menor custo.
         mirrors = [np.eye(3)]
         if enantiomorphs:
             M = np.eye(3); M[2, 2] = -1.0      # reflexao no plano xy
@@ -393,6 +386,10 @@ def process(job):
 
         cost, T = best
         fit = apply_T(mod, T)
+
+        if save_dir:
+            os.makedirs(save_dir, exist_ok=True)
+            write_ca_pdb(fit, os.path.join(save_dir, f"{acc}_final.pdb"))
 
         return dict(
             entry=acc, status="ok",
@@ -436,6 +433,8 @@ def main():
     ap.add_argument("--w-cover", type=float, default=1.0)
     ap.add_argument("--no-enantiomorphs", action="store_true",
                     help="nao testa a imagem especular do modelo")
+    ap.add_argument("--save-aligned", default="",
+                    help="pasta para salvar as poses finais (Ca) em PDB")
     args = ap.parse_args()
 
     sasbdb = os.path.join(os.path.expanduser(args.base), "data", "sasbdb")
@@ -456,7 +455,8 @@ def main():
             jobs.append((acc, env, mod, args.penalty, args.restarts,
                          args.max_iter, args.max_points, args.sample_env,
                          args.seed + i, args.mode,
-                         args.w_leak, args.w_cover, not args.no_enantiomorphs))
+                         args.w_leak, args.w_cover, not args.no_enantiomorphs,
+                         args.save_aligned))
 
     workers = args.workers or min(cpu_count(), len(jobs))
     print(f"{len(jobs)} entradas | modo={args.mode} | lambda={args.penalty} | "
