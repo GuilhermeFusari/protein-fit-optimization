@@ -27,10 +27,10 @@ def get_env_coords(cif_path):
 def weighted_asymmetric_score(src, env_tree, penalty):
     dists, _ = env_tree.query(src, k=1)
     base_dist = np.mean(dists)
-    
+
     threshold = 3.0
     outliers = dists[dists > threshold]
-    
+
     if len(outliers) > 0:
         penalty_term = penalty * np.sum(outliers - threshold) / len(src)
         return base_dist + penalty_term
@@ -45,7 +45,7 @@ def icp_align_with_penalty(src_pts, env_pts, max_iter=30, penalty=50.0):
     for _ in range(max_iter):
         _, indices = env_tree.query(src, k=1)
         closest = env_pts[indices]
-        
+
         score = weighted_asymmetric_score(src, env_tree, penalty=penalty)
         best_score = min(best_score, score)
 
@@ -53,11 +53,11 @@ def icp_align_with_penalty(src_pts, env_pts, max_iter=30, penalty=50.0):
         H = (src - src_mean).T @ (closest - tgt_mean)
         U, _, Vt = np.linalg.svd(H)
         R = Vt.T @ U.T
-        
+
         if np.linalg.det(R) < 0:
             Vt[-1, :] *= -1
             R = Vt.T @ U.T
-            
+
         t = tgt_mean - R @ src_mean
         src = (R @ src.T).T + t
 
@@ -71,28 +71,24 @@ def evaluate_pdb_packing(args):
     pdb_path, env_coords, max_iter, sample_size, penalty = args
     try:
         pts = extract_coords(pdb_path)
-        
+
         if sample_size and len(env_coords) > sample_size:
             idx = np.random.choice(len(env_coords), sample_size, replace=False)
             env_sampled = env_coords[idx]
         else:
             env_sampled = env_coords
 
-        # ========================================================
-        # ALEATORIEDADE: Gira a proteína em um ângulo X, Y, Z aleatório
-        # ========================================================
+        # rotacao inicial aleatoria
         center = pts.mean(axis=0)
         rot_matrix = R_scipy.random().as_matrix()
         pts_rotated = (rot_matrix @ (pts - center).T).T + center
-        
+
         init_T = np.eye(4)
         init_T[:3, :3] = rot_matrix
         init_T[:3, 3] = center - rot_matrix @ center
-        
-        # Roda o ICP a partir desse ângulo novo
+
         T_iter, score = icp_align_with_penalty(pts_rotated, env_sampled, max_iter, penalty)
-        
-        # Junta o giro inicial com a rota do ICP
+
         final_T = T_iter @ init_T
 
         return True, score, pdb_path, final_T
@@ -102,9 +98,9 @@ def evaluate_pdb_packing(args):
 def get_best_candidates(input_folder, envelope_path, top_n=5, limit=None, penalty=50.0):
     files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.pdb')]
     if limit: files = files[:limit]
-    
+
     env_coords = get_env_coords(envelope_path)
-    
+
     work_args = [(p, env_coords, 30, 2000, penalty) for p in files]
     results = []
 

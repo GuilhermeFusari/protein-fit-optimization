@@ -107,13 +107,11 @@ def main():
     lambdas, entradas, M = carregar(args.sweep, args.criterio)
     n = len(entradas)
 
-    # --- 1. otimo "ingenuo": escolhe lambda com todas as entradas ---
     media_por_lambda = M.mean(axis=0)
     i_naive = int(np.argmin(media_por_lambda))
     lam_naive = lambdas[i_naive]
     valor_naive = media_por_lambda[i_naive]
 
-    # --- 2. leave-one-out ---
     # para cada entrada i: escolhe o lambda que minimiza a media nas OUTRAS
     # entradas; mede o criterio na entrada i com esse lambda.
     escolhidos = np.empty(n)
@@ -128,7 +126,6 @@ def main():
 
     loo_media = float(medidos.mean())
 
-    # --- salva resultados por entrada ---
     df = pd.DataFrame({
         "entry": entradas,
         "lambda_escolhido_loo": escolhidos,
@@ -137,7 +134,6 @@ def main():
     })
     df.to_csv(args.out, index=False)
 
-    # --- relatorio ---
     print(f"criterio minimizado: {args.criterio}")
     print(f"entradas: {n} | lambdas: {list(lambdas)}\n")
 

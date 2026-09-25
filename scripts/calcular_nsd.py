@@ -45,9 +45,7 @@ import numpy as np
 from scipy.spatial import cKDTree
 
 
-# --------------------------------------------------------------------------
 # leitura (PDB ou mmCIF, detectado pelo conteudo, nao pela extensao)
-# --------------------------------------------------------------------------
 
 def _pdb(path):
     pts = []
@@ -98,9 +96,7 @@ def read_coords(path):
     return np.asarray(pts, dtype=float)
 
 
-# --------------------------------------------------------------------------
 # metricas
-# --------------------------------------------------------------------------
 
 def spacing(pts):
     """Espacamento tipico: mediana da distancia ao vizinho mais proximo."""
@@ -124,8 +120,6 @@ def nsd(A, B):
 def chamfer(A, B):
     return float((cKDTree(B).query(A)[0].mean() + cKDTree(A).query(B)[0].mean()) / 2.0)
 
-
-# --------------------------------------------------------------------------
 
 def main():
     ap = argparse.ArgumentParser()

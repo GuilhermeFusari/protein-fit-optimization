@@ -51,9 +51,7 @@ def load_ok(path):
     return d[d.status == "ok"] if "status" in d.columns else d
 
 
-# --------------------------------------------------------------------------
 # 1. varredura de lambda
-# --------------------------------------------------------------------------
 
 def fig_varredura():
     arqs = sorted(glob.glob("sweep_lambda/lam_*.csv"),
@@ -97,9 +95,7 @@ def fig_varredura():
     print("  figura_varredura_lambda.png")
 
 
-# --------------------------------------------------------------------------
 # 2. ablation fatorial 2x2
-# --------------------------------------------------------------------------
 
 def fig_fatorial():
     def m(pat):
@@ -152,9 +148,7 @@ def fig_fatorial():
     print("  figura_fatorial.png")
 
 
-# --------------------------------------------------------------------------
 # 3. comparacao com o cifsup
-# --------------------------------------------------------------------------
 
 def fig_comparacao():
     d = load_ok("benchmark_cifsup_lam02.csv")

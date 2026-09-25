@@ -40,9 +40,7 @@ import numpy as np
 from scipy.spatial import Delaunay, cKDTree
 SCORE_RE = re.compile(r"REMARK 265 score\s*:\s*([-+]?\d+(?:\.\d+)?)", re.I)
 TIMEOUT = 600
-# --------------------------------------------------------------------------
 # leitura (PDB e mmCIF, detectados pelo conteudo, nao pela extensao)
-# --------------------------------------------------------------------------
 def _pdb_fmt(path, ca_only):
     pts = []
     with open(path, "r", errors="replace") as f:
@@ -101,9 +99,7 @@ def write_pdb(pts, path, resname="ALA"):
             f.write(f"ATOM  {i:5d}  CA  {resname} A{i:4d}    "
                     f"{x:8.3f}{y:8.3f}{z:8.3f}  1.00  0.00           C\n")
         f.write("END\n")
-# --------------------------------------------------------------------------
 # metricas (identicas as do icp_saxs_bidirectional.py)
-# --------------------------------------------------------------------------
 def chamfer(a, b):
     return float((cKDTree(b).query(a)[0].mean() + cKDTree(a).query(b)[0].mean()) / 2.0)
 def frac_outside(pts, env):
@@ -118,7 +114,6 @@ def grid_spacing(env):
         return 3.0
     d, _ = cKDTree(env).query(env, k=2)
     return float(np.median(d[:, 1]))
-# --------------------------------------------------------------------------
 def run_cifsup(method, template, movable, out_pdb):
     cmd = ["cifsup", f"--method={method}", "-o", str(out_pdb), str(template), str(movable)]
     t0 = time.time()
