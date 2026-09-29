@@ -174,3 +174,23 @@ def test_cli_benchmark(tmp_path):
     assert rc == 0
     lines = csv.read_text().splitlines()
     assert len(lines) == 3 and lines[0].startswith("entry,status,custo,chamfer")
+
+
+def test_hybrid_mmcif_header_with_pdb_lines(tmp_path):
+    # mmCIF header declaring 16 columns followed by PDB fixed-column lines
+    # (found in SASBDB fit files): must fall back to the PDB reader
+    head = "data_x\nloop_\n" + "".join(
+        f"_atom_site.{c}\n" for c in (
+            "group_PDB id type_symbol label_atom_id label_alt_id label_comp_id "
+            "label_asym_id label_seq_id pdbx_PDB_ins_code Cartn_x Cartn_y Cartn_z "
+            "occupancy B_iso_or_equiv pdbx_formal_charge pdbx_PDB_model_num").split())
+    lines = [f"ATOM  {i:5d}  CA  ASP A   1    {x:8.3f}{y:8.3f}{z:8.3f}  1.00 20.00           C\n"
+             for i, (x, y, z) in enumerate([(-4.334, -2.157, 30.781),
+                                            (-4.334, 3.843, 30.781),
+                                            (16.666, 12.843, 68.965),
+                                            (1.0, 2.0, 3.0)], 1)]
+    f = tmp_path / "hybrid.pdb"
+    f.write_text(head + "".join(lines))
+    got = read_coords(str(f))
+    assert got.shape == (4, 3)
+    assert np.allclose(got[0], [-4.334, -2.157, 30.781])

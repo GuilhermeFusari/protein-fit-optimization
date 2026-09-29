@@ -73,7 +73,10 @@ def _read_cif_format(path, ca_only):
 
     pts = []
     for parts in rows:
-        if len(parts) <= max(ix, iy, iz):
+        # a row must have exactly one value per declared column; anything
+        # else (e.g. PDB-formatted lines under an mmCIF header) would shift
+        # the columns and give wrong coordinates
+        if len(parts) != len(cols):
             continue
         if ca_only and ia is not None and len(parts) > ia:
             if parts[ia].strip('"').strip("'") != "CA":
@@ -92,10 +95,18 @@ def read_coords(path, ca_only=False):
     With ca_only=True returns the C-alpha atoms; if none can be identified
     (e.g. a coarse-grained model) returns all atoms.
     """
-    reader = _read_cif_format if is_mmcif(path) else _read_pdb_format
-    pts = reader(path, ca_only)
-    if not pts and ca_only:
-        pts = reader(path, False)
+    if is_mmcif(path):
+        # hybrid files (mmCIF header, PDB-formatted atom lines) fall back to
+        # the fixed-column reader
+        readers = (_read_cif_format, _read_pdb_format)
+    else:
+        readers = (_read_pdb_format,)
+    for reader in readers:
+        pts = reader(path, ca_only)
+        if not pts and ca_only:
+            pts = reader(path, False)
+        if pts:
+            break
     return np.asarray(pts, dtype=float).reshape(-1, 3)
 
 
