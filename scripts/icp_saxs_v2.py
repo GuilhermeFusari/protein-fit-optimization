@@ -155,8 +155,11 @@ def author_cost(src, env_pts, env_tree):
         score = media(dist envelope->proteina)          # preenchimento
               + penalty * media(dist proteina->envelope) # vazamento
 
-    Medias simples, sem limiar: todo atomo contribui, e o vazamento
-    custa `penalty` vezes mais que deixar espaco vazio.
+    Medias simples, sem limiar: todo atomo contribui. O vazamento entra com
+    peso `penalty` (lambda) relativo ao preenchimento, que tem peso 1. Com
+    lambda < 1 o vazamento pesa menos que o espaco vazio; no artigo
+    penalty=0.2, ou seja, cada angstrom de vazamento custa 1/5 de um angstrom
+    de espaco vazio.
     """
     d_fill, _ = cKDTree(src).query(env_pts, k=1)
     d_leak, _ = env_tree.query(src, k=1)
