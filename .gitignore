@@ -8,3 +8,9 @@ __pycache__/
 resultado_*/
 poses_*/
 _figuras_antigas/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+*_aligned/
+packing_out/

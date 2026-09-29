@@ -48,75 +48,155 @@ optimises Chamfer. The two are reported side by side in
 
 ## Installation
 
+Requires Python 3.9 or later. From a terminal (Linux, macOS or Windows):
+
 ```bash
-conda create -n icp python=3.11 numpy scipy pandas matplotlib -y
-conda activate icp
+pip install git+https://github.com/GuilhermeFusari/protein-fit-optimization.git
 ```
 
-Or with venv:
+This installs the `saxs-icp` command and its dependencies (numpy, scipy,
+biopython). Using a virtual environment is recommended:
 
 ```bash
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt matplotlib
+python3 -m venv saxs-env
+source saxs-env/bin/activate        # Windows: saxs-env\Scripts\activate
+pip install git+https://github.com/GuilhermeFusari/protein-fit-optimization.git
 ```
 
-Dependencies: numpy, scipy, pandas. Matplotlib is needed only for the
-figures. The ATSAS comparison requires `cifsup` on the PATH (ATSAS 3.2 or
-later, free academic licence at biosaxs.com).
-
-## Usage
-
-### Benchmark alignment
+or with conda:
 
 ```bash
+conda create -n saxs-icp python=3.11 -y && conda activate saxs-icp
+pip install git+https://github.com/GuilhermeFusari/protein-fit-optimization.git
+```
+
+Check the installation with `saxs-icp --version`. If the command is not found,
+`python -m saxs_icp` works the same way.
+
+## Quick start
+
+Fit an atomic model into a SAXS envelope:
+
+```bash
+saxs-icp align model.pdb envelope.cif -o result/
+```
+
+* **model**: atomic structure, PDB or mmCIF (e.g. from the PDB or AlphaFold).
+* **envelope**: dummy-atom model from DAMMIF, DAMMIN, GASBOR, DAMAVER, etc.,
+  PDB or mmCIF. The format is detected from the content, not the extension.
+
+Output in `result/`:
+
+| File | Content |
+|---|---|
+| `model_aligned.pdb` (or `.cif`) | the full model, all atoms, moved into the envelope frame |
+| `envelope_mirrored.pdb` | only when the mirror image fits better (see below) |
+| `report.json` | metrics, parameters and the 4×4 transformation matrix |
+
+The defaults are the published method (λ = 0.2, `author` mode, 3 restarts,
+enantiomorph search), so no options are needed.
+
+**Mirrored envelopes.** SAXS does not determine chirality, so the envelope may
+have the wrong hand. Both hands are tested. When the mirror image fits better,
+the protein is *not* mirrored (that would turn it into a D-amino-acid
+structure); instead the envelope is reflected and saved as
+`envelope_mirrored.pdb`. Open the aligned model together with that file.
+
+Try it with the bundled example:
+
+```bash
+git clone https://github.com/GuilhermeFusari/protein-fit-optimization.git
+cd protein-fit-optimization
+saxs-icp align examples/SASDTS8_model.pdb examples/SASDTS8_envelope.cif -o test_out
+```
+
+### Options
+
+| Flag | Default | Description |
+|---|---|---|
+| `--penalty` | 0.2 | Weight λ of the leak term. See "Choosing λ". 0 = plain ICP |
+| `--mode` | `author` | `author` (fill + λ·leak, published), `bidir` (thresholded), `uni` (leak only) |
+| `--restarts` | 3 | Initial orientations per hand |
+| `--max-iter` | 50 | ICP iterations |
+| `--max-points` | 3000 | C-alpha atoms used; larger models are subsampled |
+| `--sample-env` | 5000 | Envelope points used (0 = all) |
+| `--seed` | 42 | Random seed; results are fully reproducible |
+| `--no-enantiomorphs` | off | Do not test the mirror image |
+
+`saxs-icp align --help` lists them all.
+
+### Multi-copy packing
+
+Ranks every `.pdb` in a folder (e.g. frames of a simulation) against one
+envelope and writes the best copies aligned:
+
+```bash
+saxs-icp pack frames/ envelope.cif -o packing_out/ --copies 20
+```
+
+Writes `RANK_01_<name>.pdb` … , `ALL_TOP_ALIGNED.pdb` (all copies as models)
+and `report.txt`. Add `--seed N` for reproducible runs.
+
+### Batch benchmark
+
+Runs over a SASBDB-style folder (`<base>/data/sasbdb/<ACC>_envelope.cif` and
+`<ACC>_model.pdb`) and writes one CSV row per entry:
+
+```bash
+saxs-icp benchmark --base <folder containing data/sasbdb/> --out results.csv
+```
+
+With the default options this reproduces `benchmark/final_lam02.csv` exactly.
+
+### Use from Python
+
+```python
+import saxs_icp
+
+model = saxs_icp.read_coords("model.pdb", ca_only=True)
+env = saxs_icp.read_coords("envelope.cif")
+r = saxs_icp.align(model, env)
+print(r.metrics["chamfer"], r.mirrored)
+T_model, M_env = saxs_icp.proper_transform(r.transform)
+```
+
+## Reproducing the paper
+
+The scripts in `scripts/` regenerate every table and figure. They need a few
+extra packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+```bash
+# alignment (same result as `saxs-icp benchmark`)
 python3 scripts/icp_saxs_v2.py \
   --base <folder containing data/sasbdb/> \
   --mode author --penalty 0.2 --max-points 3000 \
   --out results.csv
-```
 
-Relevant parameters:
-
-| Flag | Default | Description |
-|---|---|---|
-| `--mode` | `bidir` | `author` (bidirectional, plain means, recommended), `bidir` (thresholded), `uni` (leak only) |
-| `--penalty` | 50 | Weight λ. **Use 0.2.** See "Choosing λ" below |
-| `--max-points` | 300 | Model downsampling. Use 3000 or more to disable |
-| `--no-enantiomorphs` | n/a | Disables mirror-image testing |
-| `--restarts` | 3 | Random initial rotations |
-| `--seed` | 42 | Seed, for reproducibility |
-
-### Comparison against ATSAS
-
-```bash
+# comparison against ATSAS cifsup (needs cifsup on the PATH, ATSAS 3.2+)
 python3 scripts/benchmark_cifsup.py \
   --base <folder containing data/sasbdb/> \
   --ours results.csv --max-points 3000 \
   --out benchmark_cifsup.csv
-```
 
-### NSD cross-metric table and λ cross-validation
-
-```bash
+# NSD cross-metric table and lambda cross-validation
 python3 scripts/calcular_nsd.py \
   --base <folder> --ours poses_ours --cifsup poses_cifsup \
   --out tabela_chamfer_nsd.csv
 python3 scripts/validacao_lambda.py \
   --sweep "sweep_lambda/lam_*.csv" --criterio chamfer --out loo_lambda.csv
-```
 
-### Figures
-
-```bash
+# figures
 python3 scripts/gerar_figuras_v2.py       # lambda sweep, factorial ablation, cifsup comparison
 python3 scripts/gerar_figura_packing.py   # packing with random control
 ```
 
-### Packing mode (original code)
-
-```bash
-python3 src/main.py packing -i data/pdbs/ -e data/envelope.cif -o output/
-```
+Note that `scripts/icp_saxs_v2.py` defaults to `--mode bidir --max-points 300`;
+pass the options above to reproduce the published configuration. The
+`saxs-icp` command uses the published configuration by default.
 
 ## Method notes
 
@@ -174,8 +254,15 @@ before calling cifsup.
 ## Layout
 
 ```
-├─ src/                    original pipeline (single, packing)
-├─ scripts/
+├─ src/saxs_icp/           installable package (the `saxs-icp` command)
+│  ├─ core.py                      alignment, 3 modes plus enantiomorphs
+│  ├─ io.py                        PDB / mmCIF reading and writing
+│  ├─ packing.py                   multi-copy packing
+│  ├─ benchmark.py                 batch run over a SASBDB folder
+│  └─ cli.py                       command-line interface
+├─ tests/                  automated tests (pytest)
+├─ examples/               two SASBDB entries for a quick test
+├─ scripts/                scripts used for the paper
 │  ├─ icp_saxs_v2.py               alignment, 3 modes plus enantiomorphs
 │  ├─ benchmark_cifsup.py          comparison against ATSAS cifsup
 │  ├─ calcular_nsd.py              Chamfer × NSD cross-metric table
@@ -186,7 +273,7 @@ before calling cifsup.
 │  └─ icp_lib_ORIGINAL_bidirecional.py   preserved historical version
 ├─ benchmark/              CSVs for every experiment (sweep_lambda/, fatorial/)
 │  └─ _arquivo_pre_revisao/  superseded λ=2 / pre-bugfix results
-├─ figuras_revisao/        current figures
+├─ figuras_artigo/         current figures
 └─ data/                   not versioned (envelopes and PDBs)
 ```
 
@@ -194,7 +281,10 @@ before calling cifsup.
 
 Every number in the tables above comes from the CSVs in `benchmark/` and can
 be regenerated with the commands on this page. Results were verified on two
-independent installations.
+independent installations. The installable package gives bit-identical
+results to `scripts/icp_saxs_v2.py` (all 50 entries, every metric), and the
+test suite (`pip install ".[test]" && pytest`) checks two entries against the
+published values on every change.
 
 ## Limitations
 

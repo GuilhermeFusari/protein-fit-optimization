@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "saxs-icp"
+dynamic = ["version"]
+description = "Rigid-body fitting of atomic structures into SAXS envelopes by ICP with a bidirectional volumetric penalty"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "Guilherme Dias Fusari"}]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.20",
+    "scipy>=1.7",
+    "biopython>=1.79",
+]
+keywords = ["SAXS", "ICP", "structural biology", "envelope", "rigid-body fitting"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.optional-dependencies]
+scripts = ["pandas>=1.3", "matplotlib>=3.4", "seaborn"]
+test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/GuilhermeFusari/protein-fit-optimization"
+
+[project.scripts]
+saxs-icp = "saxs_icp.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "saxs_icp.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
