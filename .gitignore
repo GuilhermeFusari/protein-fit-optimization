@@ -7,3 +7,4 @@ __pycache__/
 *.pyc
 resultado_*/
 poses_*/
+_figuras_antigas/
