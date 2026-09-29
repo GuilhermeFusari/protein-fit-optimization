@@ -45,9 +45,7 @@ plt.rcParams.update({
 })
 
 
-# --------------------------------------------------------------------------
 # 1. enantiomeros
-# --------------------------------------------------------------------------
 
 def fig_enantiomeros():
     d = pd.read_csv("final_lam02.csv")
@@ -80,9 +78,7 @@ def fig_enantiomeros():
     print("  figura_enantiomeros.png")
 
 
-# --------------------------------------------------------------------------
 # 2. packing vs controle
-# --------------------------------------------------------------------------
 
 def read_report_combined(path):
     """Extrai o 'Global Error (Combined)' de um report.txt."""
@@ -139,9 +135,7 @@ def fig_packing():
     print("  figura_packing.png")
 
 
-# --------------------------------------------------------------------------
 # 3. ground truth
-# --------------------------------------------------------------------------
 
 def fig_ground_truth():
     d = pd.read_csv("ground_truth_final.csv")

@@ -49,7 +49,7 @@ from scipy.spatial import cKDTree
 from scipy.spatial.transform import Rotation
 
 
-# ----- leitura -----
+# leitura
 def read_ca(path):
     pts = []
     with open(path, "r", errors="replace") as f:
@@ -106,7 +106,7 @@ def write_dummy_cif(pts, path):
         f.write("#\n")
 
 
-# ----- geometria -----
+# geometria
 def principal_axes(pts):
     c = pts.mean(axis=0)
     u, s, vt = np.linalg.svd(pts - c, full_matrices=False)
@@ -171,7 +171,7 @@ def angle_between(R1, R2):
     return float(np.degrees(np.arccos(np.clip(cos, -1, 1))))
 
 
-# ----- ATSAS -----
+# ATSAS
 def run(cmd, cwd, timeout=1800):
     try:
         p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
@@ -282,7 +282,7 @@ def _read_cif_atoms(path):
     return np.asarray(pts, dtype=float)
 
 
-# ----- pipeline proprio (author, lambda 0.2, com enantiomorfos) -----
+# pipeline proprio (author, lambda 0.2, com enantiomorfos)
 def author_cost(src, env_pts, env_tree):
     d_fill, _ = cKDTree(src).query(env_pts, k=1)
     d_leak, _ = env_tree.query(src, k=1)

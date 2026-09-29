@@ -22,13 +22,11 @@ def parse_arguments():
     parser.add_argument('-i', '--input', required=True, help='Input folder or single PDB file.')
     parser.add_argument('-e', '--envelope', required=True, help='Target CIF envelope file.')
     parser.add_argument('-o', '--output', required=True, help='Output directory.')
-    
-    # Algorithmic parameters
+
     parser.add_argument('--max-iter', type=int, default=50, help='Max ICP iterations.')
     parser.add_argument('--max-structures', type=int, default=20, help='Max structures for packing mode.')
-    parser.add_argument('--penalty', type=float, default=50.0, help='Boundary violation penalty weight (packing only).')
-    
-    # Performance & System args
+    parser.add_argument('--penalty', type=float, default=0.2, help='Boundary violation penalty weight (packing only).')
+
     parser.add_argument('--workers', type=int, default=cpu_count(), help='Number of CPU threads.')
     parser.add_argument('--sample-env', type=int, default=5000, help='Envelope point downsampling limit.')
     parser.add_argument('--align-what', default='protein', choices=['protein', 'envelope'], help='Alignment target.')
@@ -46,7 +44,7 @@ def main():
             print(f"Failed in single mode: {e}")
             traceback.print_exc()
             sys.exit(1)
-            
+
     elif args.mode == 'packing':
         try:
             run_packing_pipeline(args.input, args.envelope, args.output, args)

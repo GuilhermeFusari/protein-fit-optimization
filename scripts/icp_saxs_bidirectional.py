@@ -39,9 +39,7 @@ from scipy.spatial import cKDTree, Delaunay
 from scipy.spatial.transform import Rotation
 
 
-# --------------------------------------------------------------------------
 # leitura
-# --------------------------------------------------------------------------
 
 def _read_pdb_format(path, ca_only):
     pts = []
@@ -126,9 +124,7 @@ def grid_spacing(env):
     return float(np.median(d[:, 1]))
 
 
-# --------------------------------------------------------------------------
 # custo e ICP
-# --------------------------------------------------------------------------
 
 def bidirectional_cost(src, env_tree, src_tree_pts, env_pts, penalty, threshold,
                        w_leak=1.0, w_cover=1.0):
@@ -290,9 +286,7 @@ def apply_T(pts, T):
     return (T[:3, :3] @ pts.T).T + T[:3, 3]
 
 
-# --------------------------------------------------------------------------
 # metricas de avaliacao
-# --------------------------------------------------------------------------
 
 def chamfer(a, b):
     return float((cKDTree(b).query(a)[0].mean() + cKDTree(a).query(b)[0].mean()) / 2.0)
@@ -322,9 +316,7 @@ def frac_outside(pts, env):
         return float("nan")
 
 
-# --------------------------------------------------------------------------
 # uma entrada
-# --------------------------------------------------------------------------
 
 def process(job):
     (acc, env_path, mod_path, penalty, restarts, max_iter,
@@ -390,8 +382,6 @@ def process(job):
     except Exception as e:
         return dict(entry=acc, status=f"erro: {type(e).__name__}: {e}")
 
-
-# --------------------------------------------------------------------------
 
 def main():
     ap = argparse.ArgumentParser()

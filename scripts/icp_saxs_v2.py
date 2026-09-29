@@ -30,9 +30,7 @@ from scipy.spatial import cKDTree, Delaunay
 from scipy.spatial.transform import Rotation
 
 
-# --------------------------------------------------------------------------
 # leitura
-# --------------------------------------------------------------------------
 
 def _read_pdb_format(path, ca_only):
     pts = []
@@ -117,9 +115,7 @@ def grid_spacing(env):
     return float(np.median(d[:, 1]))
 
 
-# --------------------------------------------------------------------------
 # custo e ICP
-# --------------------------------------------------------------------------
 
 def bidirectional_cost(src, env_tree, src_tree_pts, env_pts, penalty, threshold,
                        w_leak=1.0, w_cover=1.0):
@@ -284,9 +280,7 @@ def write_ca_pdb(pts, path):
         fh.write("END\n")
 
 
-# --------------------------------------------------------------------------
 # metricas de avaliacao
-# --------------------------------------------------------------------------
 
 def chamfer(a, b):
     return float((cKDTree(b).query(a)[0].mean() + cKDTree(a).query(b)[0].mean()) / 2.0)
@@ -316,9 +310,7 @@ def frac_outside(pts, env):
         return float("nan")
 
 
-# --------------------------------------------------------------------------
 # uma entrada
-# --------------------------------------------------------------------------
 
 def process(job):
     (acc, env_path, mod_path, penalty, restarts, max_iter,
@@ -410,13 +402,11 @@ def process(job):
         return dict(entry=acc, status=f"erro: {type(e).__name__}: {e}")
 
 
-# --------------------------------------------------------------------------
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", required=True, help="pasta com data/sasbdb/")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--penalty", type=float, default=50.0,
+    ap.add_argument("--penalty", type=float, default=0.2,
                     help="lambda; use 0 para o braco de controle")
     ap.add_argument("--restarts", type=int, default=3)
     ap.add_argument("--max-iter", type=int, default=50)

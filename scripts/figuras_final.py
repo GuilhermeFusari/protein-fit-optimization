@@ -33,7 +33,6 @@ plt.rcParams.update({
     "axes.grid": True, "grid.alpha": 0.25, "axes.axisbelow": True,
 })
 
-# Dicionário de Traduções
 STRINGS = {
     "en": {
         "orig_hand": "Original hand", "mirr_hand": "Mirrored hand",
@@ -105,7 +104,6 @@ def t(key, lang, **kwargs):
         return text.format(**kwargs)
     return text
 
-# Arquivos necessários
 FILES = {
     "baseline": "baseline_icp_puro.csv",
     "lam2_300": "confirma_v2.csv",
@@ -153,10 +151,6 @@ def read_report_combined(path):
         m = re.search(r"Global Error \(Combined\):\s*([\d.]+)", line)
         if m: return float(m.group(1))
     return None
-
-# ==============================================================================
-# Funções de Plotagem (adaptadas com linguagem e correções visuais)
-# ==============================================================================
 
 def fig_enantiomeros(d, out, lang):
     if "final_lam02" not in d or "espelhado" not in d["final_lam02"]: return
@@ -263,18 +257,16 @@ def fig_ablation(d, out, lang):
         errs = [s[1][col].std(ddof=1) / np.sqrt(len(s[1])) for s in steps]
         cols = [s[2] for s in steps]
         x = np.arange(len(steps))
-        
+
         ax.bar(x, vals, yerr=errs, color=cols, edgecolor="black", lw=0.6, capsize=3, width=0.68)
-        
-        # CORREÇÃO FATORIAL: Exibir o número acima da barra de erro para evitar que seja cortado
+
+        # valor acima da barra de erro
         for i, (v, e) in enumerate(zip(vals, errs)):
-            # Margem dinâmica de 3% do máximo do eixo para não grudar no topo
             offset = max(vals) * 0.03
             ax.text(i, v + e + offset, f"{v:.2f}", ha="center", va="bottom", fontsize=8.5, fontweight="bold")
-            
-        # Adiciona folga no eixo Y para os textos não saírem do gráfico
+
         ax.set_ylim(0, max([v + e for v, e in zip(vals, errs)]) * 1.15)
-        
+
         ax.set_xticks(x)
         ax.set_xticklabels([f"({i+1})" for i in range(len(steps))])
         ax.set_ylabel(label)
@@ -314,7 +306,7 @@ def fig_comparison(d, out, lang):
         if not data:
             ax.axis("off")
             continue
-            
+
         bp = ax.boxplot(data, patch_artist=True, widths=0.55,
                         medianprops=dict(color="black", lw=1.4),
                         flierprops=dict(marker="o", ms=3, mfc="none", mec="#888888", alpha=0.6))
@@ -323,7 +315,7 @@ def fig_comparison(d, out, lang):
             patch.set_alpha(0.75)
             patch.set_edgecolor("black")
             patch.set_linewidth(0.6)
-            
+
         ax.set_xticklabels(names)
         ax.set_ylabel(label)
         arrow = t("better_down", lang) if better == "lower" else t("better_up", lang)
@@ -333,11 +325,11 @@ def fig_comparison(d, out, lang):
         if a in c and b in c:
             p = wilcox(c[a], c[b])
             if not np.isnan(p):
-                # CORREÇÃO CIFSUP: P-valor movido para o topo do eixo, expandindo um pouco o limite superior
+                # p-valor no topo do eixo
                 ymin, ymax = ax.get_ylim()
-                ax.set_ylim(ymin, ymax + (ymax - ymin) * 0.18) # Dá 18% a mais de espaço em cima
-                ax.text(0.5, 0.96, f"vs NSD: p = {p:.3f} ({stars(p)})", 
-                        transform=ax.transAxes, ha="center", va="top", 
+                ax.set_ylim(ymin, ymax + (ymax - ymin) * 0.18)
+                ax.text(0.5, 0.96, f"vs NSD: p = {p:.3f} ({stars(p)})",
+                        transform=ax.transAxes, ha="center", va="top",
                         fontsize=8.5, color="#333333", fontweight="bold")
 
     fig.suptitle(t("title_comp_sup", lang), y=1.01, fontsize=11)
@@ -408,7 +400,7 @@ def main():
         out_dir = f"imagens final/{folder}"
         os.makedirs(out_dir, exist_ok=True)
         print(f"\nGerando figuras em {out_dir}/ ...")
-        
+
         fig_enantiomeros(d, out_dir, lang)
         fig_packing(out_dir, lang)
         fig_ground_truth(d, out_dir, lang)
@@ -416,7 +408,7 @@ def main():
         fig_comparison(d, out_dir, lang)
         fig_enantiomorphs(d, out_dir, lang)
         fig_per_entry(d, out_dir, lang)
-        
+
     print("\nPronto! Todas as figuras (inglês e português) foram geradas.")
     return 0
 

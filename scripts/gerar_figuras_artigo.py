@@ -113,9 +113,7 @@ def stars(p):
     return "n.s."
 
 
-# --------------------------------------------------------------------------
 # Figura 1 - ablation
-# --------------------------------------------------------------------------
 
 def fig_ablation(d):
     steps = [
@@ -157,9 +155,7 @@ def fig_ablation(d):
     print("  figure_ablation.png")
 
 
-# --------------------------------------------------------------------------
 # Figura 2 - comparacao com o ATSAS
-# --------------------------------------------------------------------------
 
 def fig_comparison(d):
     c = d["cifsup"]
@@ -211,9 +207,7 @@ def fig_comparison(d):
     print("  figure_comparison.png")
 
 
-# --------------------------------------------------------------------------
 # Figura 3 - enantiomorfos
-# --------------------------------------------------------------------------
 
 def fig_enantiomorphs(d):
     a = d["nodown"][["entry", "chamfer"]].rename(columns={"chamfer": "off"})
@@ -258,9 +252,7 @@ def fig_enantiomorphs(d):
     print("  figure_enantiomorphs.png")
 
 
-# --------------------------------------------------------------------------
 # Figura 4 - por entrada
-# --------------------------------------------------------------------------
 
 def fig_per_entry(d):
     f = d["final"][["entry", "chamfer"]].sort_values("chamfer").reset_index(drop=True)
@@ -283,9 +275,7 @@ def fig_per_entry(d):
     print("  figure_per_entry.png")
 
 
-# --------------------------------------------------------------------------
 # Tabelas
-# --------------------------------------------------------------------------
 
 def tables(d):
     # Tabela 1 - ablation

@@ -40,7 +40,7 @@ def icp_align_with_chamfer(src_pts, tgt_pts, max_iter=50, tol=1e-6):
     for _ in range(max_iter):
         _, indices = tree_tgt.query(src, k=1)
         closest = tgt[indices]
-        
+
         current_score = chamfer_distance(src, tgt)
         best_score = min(best_score, current_score)
 
@@ -49,12 +49,12 @@ def icp_align_with_chamfer(src_pts, tgt_pts, max_iter=50, tol=1e-6):
         H = (src - src_mean).T @ (closest - tgt_mean)
         U, _, Vt = np.linalg.svd(H)
         R = Vt.T @ U.T
-        
+
         # Handle reflection
         if np.linalg.det(R) < 0:
             Vt[-1, :] *= -1
             R = Vt.T @ U.T
-            
+
         t = tgt_mean - R @ src_mean
         src = (R @ src.T).T + t
 
@@ -76,8 +76,7 @@ def evaluate_pdb_alignment(args_tuple):
     pdb_path, env_coords, align_what, max_iter, sample_env = args_tuple
     try:
         prot_coords, _ = extract_structure_from_pdb(pdb_path)
-        
-        # Downsample envelope for speed if requested
+
         env_for_icp = env_coords
         if sample_env and sample_env > 0 and env_coords.shape[0] > sample_env:
             idx = np.random.choice(env_coords.shape[0], size=sample_env, replace=False)
@@ -98,16 +97,16 @@ def find_best_pdb(args):
 
     cif_dict = MMCIF2Dict(open(args.envelope, 'r', encoding='utf-8', errors='ignore'))
     env_coords = coords_from_cif_dict(cif_dict)
-    
+
     input_path = Path(args.input)
     pdb_files = [input_path] if input_path.is_file() else list(input_path.glob("*.pdb"))
-    
+
     if not pdb_files:
         print("No PDBs found.")
         return
 
     work_args = [(str(p), env_coords, args.align_what, args.max_iter, args.sample_env) for p in pdb_files]
-    
+
     best_score, best_pdb_path, best_pdb_name = float('inf'), None, None
     processed_count = 0
 
@@ -118,7 +117,6 @@ def find_best_pdb(args):
                 if score < best_score:
                     best_score, best_pdb_path, best_pdb_name = score, pdb_path, pdb_name
 
-    # Re-apply transformation to the best candidate and save
     if best_pdb_path:
         prot_coords, prot_struct = extract_structure_from_pdb(best_pdb_path)
         env_for_icp = env_coords
@@ -133,10 +131,9 @@ def find_best_pdb(args):
         io = PDBIO()
         io.set_structure(prot_struct)
         io.save(out_path)
-    
+
     elapsed_time = time.time() - start_time
 
-    # Generate standardized metrics report for data extraction
     report_path = os.path.join(args.output, "report.txt")
     with open(report_path, "w") as f:
         f.write("ALIGNMENT REPORT (SINGLE MODE)\n==============================\n\n")
@@ -145,9 +142,9 @@ def find_best_pdb(args):
             f.write(f"Best PDB File:            {best_pdb_name}\n")
         else:
             f.write("Status: FAILED\n")
-            
+
         f.write(f"Execution Time:           {elapsed_time:.2f} seconds\n")
         f.write(f"Envelope Size (points):   {env_coords.shape[0]}\n")
         f.write(f"PDBs Evaluated:           {processed_count}\n")
-    
+
     print(f"Report saved: {report_path} | Best Score: {best_score:.4f} A")

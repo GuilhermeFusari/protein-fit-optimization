@@ -218,7 +218,6 @@ def main():
     except Exception:
         pass
 
-    # ---- figura ----
     fig, ax = plt.subplots(figsize=(8.5, 4))
     x = np.arange(len(df))
     w = 0.26
