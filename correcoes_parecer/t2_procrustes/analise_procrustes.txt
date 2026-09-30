@@ -1,0 +1,18 @@
+
+## 3 inicios
+
+| Variante | Chamfer (A) | custo J (Eq. 1) | Fracao fora | Cobertura | Sep. centroide | Chamfer: p vs atual | J: p vs atual | entradas com J menor que atual | Chamfer: p vs cifsup NSD |
+|---|---|---|---|---|---|---|---|---|---|
+| atual | 5.170 | 7.1305 | 0.124 | 0.528 | 4.733 | — | — | — | 9.4e-06 |
+| eq1_ls | 5.202 | 7.1252 | 0.127 | 0.531 | 4.838 | 0.280 | 0.023 | 35/50 | 1.1e-08 |
+| eq1_irls | 5.406 | 7.3962 | 0.142 | 0.533 | 6.550 | 1.7e-05 | 6.6e-05 | 15/50 | 3.9e-10 |
+
+## 30 inicios
+
+| Variante | Chamfer (A) | custo J (Eq. 1) | Fracao fora | Cobertura | Sep. centroide | Chamfer: p vs atual | J: p vs atual | entradas com J menor que atual | Chamfer: p vs cifsup NSD |
+|---|---|---|---|---|---|---|---|---|---|
+| atual | 5.008 | 6.9197 | 0.119 | 0.541 | 3.814 | — | — | — | 0.017 |
+| eq1_ls | 4.987 | 6.8545 | 0.118 | 0.546 | 4.284 | 0.166 | 3.8e-07 | 42/50 | 0.105 |
+| eq1_irls | 5.087 | 6.9839 | 0.128 | 0.551 | 5.169 | 0.030 | 0.194 | 21/50 | 0.002 |
+
+cifsup NSD: Chamfer medio 4.997

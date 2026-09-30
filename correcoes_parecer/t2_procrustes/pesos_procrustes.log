@@ -1,0 +1,7 @@
+restarts= 3 atual    : chamfer medio 5.1703  custo medio 7.1305 (18s)
+restarts= 3 eq1_ls   : chamfer medio 5.2024  custo medio 7.1252 (17s)
+restarts= 3 eq1_irls : chamfer medio 5.4056  custo medio 7.3962 (17s)
+restarts=30 atual    : chamfer medio 5.0079  custo medio 6.9197 (131s)
+restarts=30 eq1_ls   : chamfer medio 4.9875  custo medio 6.8545 (148s)
+restarts=30 eq1_irls : chamfer medio 5.0869  custo medio 6.9839 (149s)
+checagem atual/restarts=3 vs final_lam02.csv: 0 diferencas
