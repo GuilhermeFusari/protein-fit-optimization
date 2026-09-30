@@ -1,0 +1,19 @@
+A: pca 4 feito
+A: pca 10 feito
+A: pca 30 feito
+
+Parte A: Chamfer (envelope completo), 50 entradas, semente 42
+  cifsup NSD: 4.997
+  atual   3: 5.165  p vs NSD 1.16e-05
+  atual  10: 5.048  p vs NSD 6.36e-06
+  atual  30: 5.003  p vs NSD 0.0333
+  atual 100: 4.989  p vs NSD 0.11
+  pca     4: 5.024  p vs NSD 0.00119  p vs atual 3 0.003  melhor que atual 3 em 31/50
+  pca    10: 5.009  p vs NSD 0.00148  p vs atual 3 5.2e-05  melhor que atual 3 em 34/50
+  pca    30: 5.000  p vs NSD 0.0461  p vs atual 3 9.46e-08  melhor que atual 3 em 40/50
+
+Parte B: envelopes DAMMIF (8 entradas x 4 tentativas)
+  atual  3: sucesso 1.0/32  RMSD mediano 23.9  espelhado 14
+  atual 30: sucesso 5.0/32  RMSD mediano 14.6  espelhado 9
+  pca    4: sucesso 8.0/32  RMSD mediano 9.9  espelhado 12
+  pca   30: sucesso 6.0/32  RMSD mediano 13.3  espelhado 7
