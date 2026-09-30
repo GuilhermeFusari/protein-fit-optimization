@@ -1,0 +1,126 @@
+
+[SASDPT5] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 945 pts | 27s
+  trial 0 icp_saxs   : RMSD= 68.59 A  ang=  nandeg  espelhado falhou
+  trial 0 cifsup_nsd : RMSD= 11.03 A  ang= 16.5deg  falhou
+  trial 0 cifsup_icp : RMSD= 19.39 A  ang=  nandeg  espelhado falhou
+  trial 1 icp_saxs   : RMSD= 10.84 A  ang= 16.4deg  falhou
+  trial 1 cifsup_nsd : RMSD= 11.06 A  ang= 16.5deg  falhou
+  trial 1 cifsup_icp : RMSD= 19.39 A  ang=  nandeg  espelhado falhou
+  trial 2 icp_saxs   : RMSD= 12.12 A  ang= 17.9deg  falhou
+  trial 2 cifsup_nsd : RMSD= 11.03 A  ang= 16.5deg  falhou
+  trial 2 cifsup_icp : RMSD= 19.39 A  ang=  nandeg  espelhado falhou
+  trial 3 icp_saxs   : RMSD= 38.56 A  ang=  nandeg  espelhado falhou
+  trial 3 cifsup_nsd : RMSD= 11.03 A  ang= 16.5deg  falhou
+  trial 3 cifsup_icp : RMSD= 19.39 A  ang=  nandeg  espelhado falhou
+
+[SASDTS8] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 1252 pts | 37s
+  trial 0 icp_saxs   : RMSD= 26.37 A  ang=175.5deg  falhou
+  trial 0 cifsup_nsd : RMSD= 28.75 A  ang=  nandeg  espelhado falhou
+  trial 0 cifsup_icp : RMSD= 17.02 A  ang=  nandeg  espelhado falhou
+  trial 1 icp_saxs   : RMSD=  8.78 A  ang= 34.1deg  falhou
+  trial 1 cifsup_nsd : RMSD= 28.75 A  ang=  nandeg  espelhado falhou
+  trial 1 cifsup_icp : RMSD= 17.00 A  ang=  nandeg  espelhado falhou
+  trial 2 icp_saxs   : RMSD= 18.75 A  ang=  nandeg  espelhado falhou
+  trial 2 cifsup_nsd : RMSD= 28.76 A  ang=  nandeg  espelhado falhou
+  trial 2 cifsup_icp : RMSD= 17.00 A  ang=  nandeg  espelhado falhou
+  trial 3 icp_saxs   : RMSD= 33.48 A  ang=172.2deg  falhou
+  trial 3 cifsup_nsd : RMSD= 28.75 A  ang=  nandeg  espelhado falhou
+  trial 3 cifsup_icp : RMSD= 16.96 A  ang=  nandeg  espelhado falhou
+
+[SASDUD6] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 1137 pts | 22s
+  trial 0 icp_saxs   : RMSD= 24.32 A  ang=  nandeg  espelhado falhou
+  trial 0 cifsup_nsd : RMSD=  5.33 A  ang= 15.6deg  falhou
+  trial 0 cifsup_icp : RMSD=  2.09 A  ang=  6.7deg  OK
+  trial 1 icp_saxs   : RMSD=  6.53 A  ang= 20.1deg  falhou
+  trial 1 cifsup_nsd : RMSD=  5.31 A  ang= 15.5deg  falhou
+  trial 1 cifsup_icp : RMSD=  2.09 A  ang=  6.7deg  OK
+  trial 2 icp_saxs   : RMSD= 24.30 A  ang=  nandeg  espelhado falhou
+  trial 2 cifsup_nsd : RMSD=  5.32 A  ang= 15.6deg  falhou
+  trial 2 cifsup_icp : RMSD=  2.09 A  ang=  6.7deg  OK
+  trial 3 icp_saxs   : RMSD= 43.18 A  ang=164.5deg  falhou
+  trial 3 cifsup_nsd : RMSD=  5.30 A  ang= 15.5deg  falhou
+  trial 3 cifsup_icp : RMSD=  2.09 A  ang=  6.7deg  OK
+
+[SASDUN8] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 752 pts | 23s
+  trial 0 icp_saxs   : RMSD= 12.99 A  ang=  5.4deg  falhou
+  trial 0 cifsup_nsd : RMSD=  8.92 A  ang=  3.8deg  falhou
+  trial 0 cifsup_icp : RMSD= 12.07 A  ang=  4.8deg  falhou
+  trial 1 icp_saxs   : RMSD= 45.00 A  ang=167.6deg  falhou
+  trial 1 cifsup_nsd : RMSD=  8.92 A  ang=  4.0deg  falhou
+  trial 1 cifsup_icp : RMSD= 11.91 A  ang=  4.7deg  falhou
+  trial 2 icp_saxs   : RMSD= 12.82 A  ang=  6.1deg  falhou
+  trial 2 cifsup_nsd : RMSD=  8.91 A  ang=  3.8deg  falhou
+  trial 2 cifsup_icp : RMSD= 12.03 A  ang=  5.0deg  falhou
+  trial 3 icp_saxs   : RMSD= 13.41 A  ang=  6.6deg  falhou
+  trial 3 cifsup_nsd : RMSD=  8.91 A  ang=  3.8deg  falhou
+  trial 3 cifsup_icp : RMSD= 12.10 A  ang=  4.7deg  falhou
+
+[SASDUX5] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 1852 pts | 25s
+  trial 0 icp_saxs   : RMSD=  2.57 A  ang=  5.0deg  OK
+  trial 0 cifsup_nsd : RMSD=  1.67 A  ang=  2.9deg  OK
+  trial 0 cifsup_icp : RMSD=  1.77 A  ang=  4.4deg  OK
+  trial 1 icp_saxs   : RMSD= 44.37 A  ang=178.9deg  falhou
+  trial 1 cifsup_nsd : RMSD=  1.67 A  ang=  2.9deg  OK
+  trial 1 cifsup_icp : RMSD=  1.45 A  ang=  3.4deg  OK
+  trial 2 icp_saxs   : RMSD= 23.53 A  ang=  nandeg  espelhado falhou
+  trial 2 cifsup_nsd : RMSD=  1.64 A  ang=  2.5deg  OK
+  trial 2 cifsup_icp : RMSD=  1.40 A  ang=  3.4deg  OK
+  trial 3 icp_saxs   : RMSD= 49.71 A  ang=  nandeg  espelhado falhou
+  trial 3 cifsup_nsd : RMSD=  1.67 A  ang=  2.9deg  OK
+  trial 3 cifsup_icp : RMSD=  1.41 A  ang=  3.3deg  OK
+
+[SASDV62] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 1046 pts | 32s
+  trial 0 icp_saxs   : RMSD= 46.96 A  ang=  nandeg  espelhado falhou
+  trial 0 cifsup_nsd : RMSD= 33.06 A  ang=  nandeg  espelhado falhou
+  trial 0 cifsup_icp : RMSD= 33.87 A  ang=177.0deg  falhou
+  trial 1 icp_saxs   : RMSD= 24.44 A  ang=  nandeg  espelhado falhou
+  trial 1 cifsup_nsd : RMSD= 33.06 A  ang=  nandeg  espelhado falhou
+  trial 1 cifsup_icp : RMSD= 33.87 A  ang=177.3deg  falhou
+  trial 2 icp_saxs   : RMSD= 24.51 A  ang=  nandeg  espelhado falhou
+  trial 2 cifsup_nsd : RMSD= 24.16 A  ang=  nandeg  espelhado falhou
+  trial 2 cifsup_icp : RMSD= 33.87 A  ang=177.1deg  falhou
+  trial 3 icp_saxs   : RMSD= 25.49 A  ang=  nandeg  espelhado falhou
+  trial 3 cifsup_nsd : RMSD= 33.06 A  ang=  nandeg  espelhado falhou
+  trial 3 cifsup_icp : RMSD= 33.88 A  ang=177.2deg  falhou
+
+[SASDVK8] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 979 pts | 56s
+  trial 0 icp_saxs   : RMSD= 42.20 A  ang=  nandeg  espelhado falhou
+  trial 0 cifsup_nsd : RMSD= 31.53 A  ang=  nandeg  espelhado falhou
+  trial 0 cifsup_icp : RMSD= 38.99 A  ang=164.3deg  falhou
+  trial 1 icp_saxs   : RMSD= 18.34 A  ang= 56.7deg  falhou
+  trial 1 cifsup_nsd : RMSD= 31.53 A  ang=  nandeg  espelhado falhou
+  trial 1 cifsup_icp : RMSD= 38.99 A  ang=164.2deg  falhou
+  trial 2 icp_saxs   : RMSD= 37.93 A  ang=106.1deg  falhou
+  trial 2 cifsup_nsd : RMSD= 31.53 A  ang=  nandeg  espelhado falhou
+  trial 2 cifsup_icp : RMSD= 38.98 A  ang=164.2deg  falhou
+  trial 3 icp_saxs   : RMSD= 18.02 A  ang= 55.7deg  falhou
+  trial 3 cifsup_nsd : RMSD= 31.46 A  ang=  nandeg  espelhado falhou
+  trial 3 cifsup_icp : RMSD= 38.98 A  ang=164.2deg  falhou
+
+[SASDWG8] gerando envelope sintetico (crysol + gnom + dammif)...
+  envelope: 1709 pts | 20s
+  trial 0 icp_saxs   : RMSD=  6.54 A  ang= 23.2deg  falhou
+  trial 0 cifsup_nsd : RMSD=  1.64 A  ang=  0.8deg  OK
+  trial 0 cifsup_icp : RMSD=  2.26 A  ang=  4.4deg  OK
+  trial 1 icp_saxs   : RMSD= 16.52 A  ang=  nandeg  espelhado falhou
+  trial 1 cifsup_nsd : RMSD=  1.64 A  ang=  0.8deg  OK
+  trial 1 cifsup_icp : RMSD=  2.28 A  ang=  3.1deg  OK
+  trial 2 icp_saxs   : RMSD=  8.22 A  ang= 29.7deg  falhou
+  trial 2 cifsup_nsd : RMSD=  1.64 A  ang=  0.8deg  OK
+  trial 2 cifsup_icp : RMSD=  2.31 A  ang=  3.7deg  OK
+  trial 3 icp_saxs   : RMSD= 16.32 A  ang=  nandeg  espelhado falhou
+  trial 3 cifsup_nsd : RMSD=  1.64 A  ang=  0.8deg  OK
+  trial 3 cifsup_icp : RMSD=  2.29 A  ang=  3.4deg  OK
+
+============================================================
+cifsup_icp  n= 32  sucesso= 37.5%  RMSD medio= 15.89 A  espelhado=8  erro ang (so proprias, n=24)= 60.0 deg  delta_cham=-0.180
+cifsup_nsd  n= 32  sucesso= 25.0%  RMSD medio= 14.96 A  espelhado=12  erro ang (so proprias, n=20)=  7.9 deg  delta_cham=-0.273
+icp_saxs    n= 32  sucesso=  3.1%  RMSD medio= 25.18 A  espelhado=14  erro ang (so proprias, n=18)= 69.0 deg  delta_cham=-0.006
+-> ground_truth_v2.csv

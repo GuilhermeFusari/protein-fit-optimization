@@ -1,0 +1,52 @@
+
+[SASDPT5] envelope reusado: 945 pts
+  trial 0 icp_saxs_r30: RMSD= 21.45 A  ang=  nandeg  espelhado falhou
+  trial 1 icp_saxs_r30: RMSD= 10.52 A  ang= 16.8deg  falhou
+  trial 2 icp_saxs_r30: RMSD= 12.10 A  ang= 17.9deg  falhou
+  trial 3 icp_saxs_r30: RMSD= 11.23 A  ang= 16.5deg  falhou
+
+[SASDTS8] envelope reusado: 1252 pts
+  trial 0 icp_saxs_r30: RMSD= 17.73 A  ang=  nandeg  espelhado falhou
+  trial 1 icp_saxs_r30: RMSD= 17.74 A  ang=  nandeg  espelhado falhou
+  trial 2 icp_saxs_r30: RMSD= 30.02 A  ang=  nandeg  espelhado falhou
+  trial 3 icp_saxs_r30: RMSD= 28.69 A  ang=  nandeg  espelhado falhou
+
+[SASDUD6] envelope reusado: 1137 pts
+  trial 0 icp_saxs_r30: RMSD=  5.58 A  ang= 14.9deg  falhou
+  trial 1 icp_saxs_r30: RMSD=  5.63 A  ang= 16.4deg  falhou
+  trial 2 icp_saxs_r30: RMSD=  6.18 A  ang= 17.3deg  falhou
+  trial 3 icp_saxs_r30: RMSD=  6.16 A  ang= 17.0deg  falhou
+
+[SASDUN8] envelope reusado: 752 pts
+  trial 0 icp_saxs_r30: RMSD= 13.55 A  ang=  9.2deg  falhou
+  trial 1 icp_saxs_r30: RMSD=  8.73 A  ang=  3.2deg  falhou
+  trial 2 icp_saxs_r30: RMSD= 13.18 A  ang=  7.0deg  falhou
+  trial 3 icp_saxs_r30: RMSD= 13.41 A  ang=  6.6deg  falhou
+
+[SASDUX5] envelope reusado: 1852 pts
+  trial 0 icp_saxs_r30: RMSD=  2.79 A  ang=  5.7deg  OK
+  trial 1 icp_saxs_r30: RMSD=  2.56 A  ang=  5.1deg  OK
+  trial 2 icp_saxs_r30: RMSD=  2.48 A  ang=  4.6deg  OK
+  trial 3 icp_saxs_r30: RMSD=  2.35 A  ang=  3.7deg  OK
+
+[SASDV62] envelope reusado: 1046 pts
+  trial 0 icp_saxs_r30: RMSD= 24.61 A  ang=  nandeg  espelhado falhou
+  trial 1 icp_saxs_r30: RMSD= 40.16 A  ang=163.9deg  falhou
+  trial 2 icp_saxs_r30: RMSD= 40.37 A  ang=167.0deg  falhou
+  trial 3 icp_saxs_r30: RMSD= 31.18 A  ang=131.6deg  falhou
+
+[SASDVK8] envelope reusado: 979 pts
+  trial 0 icp_saxs_r30: RMSD= 15.70 A  ang= 47.5deg  falhou
+  trial 1 icp_saxs_r30: RMSD= 18.40 A  ang= 56.9deg  falhou
+  trial 2 icp_saxs_r30: RMSD= 31.62 A  ang=  nandeg  espelhado falhou
+  trial 3 icp_saxs_r30: RMSD= 18.02 A  ang= 55.7deg  falhou
+
+[SASDWG8] envelope reusado: 1709 pts
+  trial 0 icp_saxs_r30: RMSD= 24.67 A  ang=  nandeg  espelhado falhou
+  trial 1 icp_saxs_r30: RMSD= 15.59 A  ang=  nandeg  espelhado falhou
+  trial 2 icp_saxs_r30: RMSD=  1.26 A  ang=  2.4deg  OK
+  trial 3 icp_saxs_r30: RMSD= 28.86 A  ang=179.7deg  falhou
+
+============================================================
+icp_saxs_r30 n= 32  sucesso= 15.6%  RMSD medio= 16.33 A  espelhado=9  erro ang (so proprias, n=23)= 42.0 deg  delta_cham=-0.273
+-> ground_truth_v2_reuso_r30.csv
