@@ -1,0 +1,326 @@
+{
+  "n_pool": 20,
+  "chi2_pool_completo": 1.8349608997680689,
+  "por_k": {
+    "5": {
+      "n_subconjuntos": 15504,
+      "chi2_aleatorio_mediana": 3.804,
+      "chi2_aleatorio_p5": 1.62,
+      "chi2_aleatorio_p95": 10.919,
+      "chi2_melhor_subconjunto": 1.13,
+      "chi2_packing_mediana": 9.051,
+      "percentil_packing_mediana": 90.5,
+      "percentil_packing_min_max": [
+        71.9,
+        98.5
+      ],
+      "selecoes": [
+        {
+          "seed": 1,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model5.pdb"
+          ],
+          "chi2": 6.065,
+          "percentil": 75.6
+        },
+        {
+          "seed": 2,
+          "membros": [
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model13.pdb"
+          ],
+          "chi2": 14.138,
+          "percentil": 98.5
+        },
+        {
+          "seed": 3,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model12.pdb"
+          ],
+          "chi2": 13.633,
+          "percentil": 98.1
+        },
+        {
+          "seed": 4,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model12.pdb"
+          ],
+          "chi2": 7.985,
+          "percentil": 86.4
+        },
+        {
+          "seed": 5,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model13.pdb"
+          ],
+          "chi2": 10.538,
+          "percentil": 94.3
+        },
+        {
+          "seed": 6,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model12.pdb"
+          ],
+          "chi2": 9.348,
+          "percentil": 91.4
+        },
+        {
+          "seed": 7,
+          "membros": [
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model4.pdb"
+          ],
+          "chi2": 5.621,
+          "percentil": 71.9
+        },
+        {
+          "seed": 8,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model5.pdb"
+          ],
+          "chi2": 8.754,
+          "percentil": 89.5
+        },
+        {
+          "seed": 9,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model12.pdb"
+          ],
+          "chi2": 12.105,
+          "percentil": 96.7
+        },
+        {
+          "seed": 10,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model9.pdb"
+          ],
+          "chi2": 6.178,
+          "percentil": 76.5
+        }
+      ]
+    },
+    "10": {
+      "n_subconjuntos": 184756,
+      "chi2_aleatorio_mediana": 2.197,
+      "chi2_aleatorio_p5": 1.306,
+      "chi2_aleatorio_p95": 6.26,
+      "chi2_melhor_subconjunto": 1.12,
+      "chi2_packing_mediana": 6.21,
+      "percentil_packing_mediana": 94.8,
+      "percentil_packing_min_max": [
+        58.5,
+        98.3
+      ],
+      "selecoes": [
+        {
+          "seed": 1,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model7.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model5.pdb",
+            "SASDFQ9_fit1_model4.pdb",
+            "SASDFQ9_fit1_model2.pdb"
+          ],
+          "chi2": 3.125,
+          "percentil": 68.9
+        },
+        {
+          "seed": 2,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model7.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model19.pdb"
+          ],
+          "chi2": 6.514,
+          "percentil": 95.8
+        },
+        {
+          "seed": 3,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model5.pdb",
+            "SASDFQ9_fit1_model4.pdb"
+          ],
+          "chi2": 6.628,
+          "percentil": 96.1
+        },
+        {
+          "seed": 4,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model7.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model10.pdb",
+            "SASDFQ9_fit1_model2.pdb"
+          ],
+          "chi2": 6.414,
+          "percentil": 95.5
+        },
+        {
+          "seed": 5,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model14.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model7.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model4.pdb"
+          ],
+          "chi2": 5.44,
+          "percentil": 91.5
+        },
+        {
+          "seed": 6,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model14.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model4.pdb",
+            "SASDFQ9_fit1_model2.pdb"
+          ],
+          "chi2": 7.14,
+          "percentil": 97.3
+        },
+        {
+          "seed": 7,
+          "membros": [
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model14.pdb",
+            "SASDFQ9_fit1_model7.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model5.pdb",
+            "SASDFQ9_fit1_model4.pdb",
+            "SASDFQ9_fit1_model6.pdb"
+          ],
+          "chi2": 2.547,
+          "percentil": 58.5
+        },
+        {
+          "seed": 8,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model14.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model19.pdb",
+            "SASDFQ9_fit1_model5.pdb",
+            "SASDFQ9_fit1_model4.pdb"
+          ],
+          "chi2": 6.007,
+          "percentil": 94.1
+        },
+        {
+          "seed": 9,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model7.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model5.pdb"
+          ],
+          "chi2": 5.548,
+          "percentil": 92.1
+        },
+        {
+          "seed": 10,
+          "membros": [
+            "SASDFQ9_fit1_model8.pdb",
+            "SASDFQ9_fit1_model16.pdb",
+            "SASDFQ9_fit1_model17.pdb",
+            "SASDFQ9_fit1_model20.pdb",
+            "SASDFQ9_fit1_model15.pdb",
+            "SASDFQ9_fit1_model3.pdb",
+            "SASDFQ9_fit1_model9.pdb",
+            "SASDFQ9_fit1_model12.pdb",
+            "SASDFQ9_fit1_model13.pdb",
+            "SASDFQ9_fit1_model5.pdb"
+          ],
+          "chi2": 7.779,
+          "percentil": 98.3
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+ALIGNMENT REPORT
+================
+
+Top 1 Error (Individual): 4.779060 A
+Global Error (Combined):  3.331583 A
+Improvement:              YES
+Number of Copies:         5
+Penalty Weight Used:      0.2
+Execution Time:           0.37 seconds
+Envelope Size (points):   172
+
+--------------------------------------------------
+RANK  | CHAMFER (A)  | FILE
+#1    | 4.7791       | SASDFQ9_fit1_model16.pdb
+#2    | 4.6538       | SASDFQ9_fit1_model4.pdb
+#3    | 5.1548       | SASDFQ9_fit1_model13.pdb
+#4    | 4.9974       | SASDFQ9_fit1_model15.pdb
+#5    | 5.1914       | SASDFQ9_fit1_model17.pdb
