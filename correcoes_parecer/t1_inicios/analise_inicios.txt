@@ -1,0 +1,46 @@
+Envelopes com mais de 5000 pontos (Chamfer amostrado != completo): 9
+
+## Semente publicada (42): medias e Wilcoxon contra cifsup NSD
+
+| Inicios | Chamfer | p | Chamfer env. completo | p | Fracao fora | p | Cobertura | p | Sep. centroide | p |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 3 | 5.170 | 9.4e-06 | 5.165 | 1.2e-05 | 0.124 | 0.078 | 0.528 | 0.001 | 4.733 | 0.126 |
+| 10 | 5.053 | 3.2e-06 | 5.048 | 6.4e-06 | 0.122 | 0.404 | 0.537 | 0.039 | 3.954 | 0.466 |
+| 30 | 5.008 | 0.017 | 5.003 | 0.033 | 0.119 | 0.852 | 0.541 | 0.038 | 3.814 | 0.058 |
+| 100 | 4.994 | 0.066 | 4.989 | 0.110 | 0.116 | 0.151 | 0.544 | 0.727 | 4.031 | 0.290 |
+| cifsup NSD | 4.997 |  | 4.997 |  | 0.123 |  | 0.538 |  | 4.197 |  |
+
+## Direcao do efeito (semente 42): entradas em que ICP-SAXS < cifsup NSD em Chamfer
+
+| Inicios | ICP-SAXS melhor | cifsup melhor | diferenca media (A) |
+|---|---|---|---|
+| 3 | 10 | 40 | +0.173 |
+| 10 | 9 | 41 | +0.056 |
+| 30 | 16 | 34 | +0.011 |
+| 100 | 17 | 33 | -0.003 |
+
+## Robustez: Chamfer medio e p contra cifsup NSD por semente-base
+
+| Inicios | semente 42 | semente 1042 | semente 2042 |
+|---|---|---|---|
+| 3 | 5.170 (p=9.4e-06) | 5.203 (p=2.4e-06) | 5.150 (p=4.5e-06) |
+| 10 | 5.053 (p=3.2e-06) | 5.052 (p=0.00078) | 5.025 (p=0.00017) |
+| 30 | 5.008 (p=0.017) | 5.006 (p=0.023) | 5.004 (p=0.019) |
+| 100 | 4.994 (p=0.066) | 4.997 (p=0.065) | 4.997 (p=0.088) |
+
+## Ganho sobre 3 inicios (mesma semente), Wilcoxon pareado
+
+| Inicios | semente 42 | semente 1042 | semente 2042 |
+|---|---|---|---|
+| 10 | -0.117 A (p=0.002) | -0.151 A (p=8.5e-06) | -0.126 A (p=0.00024) |
+| 30 | -0.162 A (p=7e-08) | -0.197 A (p=4.7e-08) | -0.146 A (p=2e-07) |
+| 100 | -0.177 A (p=9.5e-08) | -0.206 A (p=6.5e-09) | -0.153 A (p=4.9e-08) |
+
+## Custo (Eq. 1) medio: a busca melhora o proprio objetivo?
+
+| Inicios | semente 42 | semente 1042 | semente 2042 |
+|---|---|---|---|
+| 3 | 7.1305 | 7.1702 | 7.1551 |
+| 10 | 6.9840 | 6.9828 | 6.9629 |
+| 30 | 6.9197 | 6.9238 | 6.9183 |
+| 100 | 6.9014 | 6.9031 | 6.8974 |

@@ -1,0 +1,13 @@
+seed_base=42 restarts=  3: chamfer medio 5.1703 (18s)
+seed_base=42 restarts= 10: chamfer medio 5.0529 (41s)
+seed_base=42 restarts= 30: chamfer medio 5.0079 (129s)
+seed_base=42 restarts=100: chamfer medio 4.9937 (407s)
+seed_base=1042 restarts=  3: chamfer medio 5.2029 (18s)
+seed_base=1042 restarts= 10: chamfer medio 5.0518 (43s)
+seed_base=1042 restarts= 30: chamfer medio 5.0058 (113s)
+seed_base=1042 restarts=100: chamfer medio 4.9968 (356s)
+seed_base=2042 restarts=  3: chamfer medio 5.1502 (17s)
+seed_base=2042 restarts= 10: chamfer medio 5.0246 (41s)
+seed_base=2042 restarts= 30: chamfer medio 5.0042 (115s)
+seed_base=2042 restarts=100: chamfer medio 4.9967 (396s)
+checagem restarts=3 semente 42 vs final_lam02.csv: 0 diferencas
